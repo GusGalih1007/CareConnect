@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('page_role_actions', function (Blueprint $table) {
+            $table->increment('page_role_actions_id');
+            $table->uuid('page_code');
+            $table->unsignedBigInteger('role_id');
+            $table->string('page_name', 150);
+            $table->json('action');
+            $table->timestamps();
+
+            $table->foreign('page_code')->references('page_code')->on('pages')->onDelete('cascade')->onUpdate('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('page_role_actions');
+    }
+};

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('badges', function (Blueprint $table) {
-            $table->increment('badge_id');
+            $table->increments('badge_id');
             $table->uuid('badge_code')->unique();
             $table->string('badge_name', 100);
             $table->json('criteria')->nullable();

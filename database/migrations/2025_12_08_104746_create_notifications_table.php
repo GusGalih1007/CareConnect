@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_badges', function (Blueprint $table) {
-            $table->increments('user_badge_id');
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->increments('notification_id');
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('badge_id');
-            $table->timestamp('awarded_at');
+            $table->string('type', 100);
+            $table->json('payload')->nullable();
+            $table->boolean('is_read')->default(false);
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('badge_id')->references('badge_id')->on('badges')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_badges');
+        Schema::dropIfExists('notifications');
     }
 };

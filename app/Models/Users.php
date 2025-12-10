@@ -7,19 +7,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Users extends Authenticatable implements JwtSubject
 {
     use HasFactory;
+    use HasUuids;
     use Notifiable;
     use SoftDeletes;
-    use HasUuids;
 
     protected $table = 'users';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     protected $primaryKey = 'user_id';
 
     protected $fillable = [
@@ -41,6 +43,7 @@ class Users extends Authenticatable implements JwtSubject
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
+
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'role_id');
@@ -84,6 +87,16 @@ class Users extends Authenticatable implements JwtSubject
     public function notification()
     {
         return $this->hasMany(Notification::class, 'user_id', 'user_id');
+    }
+
+    public function volunteerTask()
+    {
+        return $this->hasMany(VolunteerTask::class, 'volunteer_id', 'user_id');
+    }
+
+    public function donationFinacial()
+    {
+        return $this->hasMany(DonationFinancial::class, 'donor_id', 'user_id');
     }
 
     /**

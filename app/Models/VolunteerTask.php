@@ -36,4 +36,13 @@ class VolunteerTask extends Model
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(Users::class, 'volunteer_id', 'user_id');
+    }
+    public function donation()
+    {
+        return $this->belongsTo(Donation::class, 'donation_id', 'donation_id');
+    }
 }

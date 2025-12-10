@@ -65,4 +65,8 @@ class Donation extends Model
     {
         return $this->belongsTo(Location::class, 'location_id', 'location_id');
     }
+    public function volunteerTask()
+    {
+        return $this->hasMany(VolunteerTask::class, 'donation_id', 'donation_id');
+    }
 }

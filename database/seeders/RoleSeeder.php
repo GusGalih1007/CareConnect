@@ -14,8 +14,12 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         Role::create([
-            'role_name' => 'Super Admin',
-            'description' => 'Application main administrator'
+            'role_name' => 'user',
+            'description' => 'Default user with limited access'
+        ]);
+        Role::create([
+            'role_name' => 'volunteer',
+            'description' => 'Volunteer for delivering packages'
         ]);
     }
 }

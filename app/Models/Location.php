@@ -31,4 +31,8 @@ class Location extends Model
     {
         return $this->hasMany(DonationRequest::class, 'location_id', 'location_id');
     }
+    public function donation()
+    {
+        return $this->hasMany(Donation::class, 'location_id', 'location_id');
+    }
 }

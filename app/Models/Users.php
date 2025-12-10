@@ -71,6 +71,22 @@ class Users extends Authenticatable Implements JwtSubject
     {
         return $this->hasMany(DonationRequestValidation::class, 'admin_id', 'user_id');
     }
+    public function donation()
+    {
+        return $this->hasMany(Donation::class, 'user_id', 'user_id');
+    }
+    public function messageSender()
+    {
+        return $this->hasMany(Message::class, 'sender_id', 'user_id');
+    }
+    public function messageReceiver()
+    {
+        return $this->hasMany(Message::class, 'receiver_id', 'user_id');
+    }
+    public function notification()
+    {
+        return $this->hasMany(Notification::class, 'user_id', 'user_id');
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

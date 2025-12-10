@@ -67,4 +67,16 @@ class DonationRequest extends Model
     {
         return $this->hasMany(DonationRequestValidation::class, 'donation_request_id', 'donation_request_id');
     }
+    public function donation()
+    {
+        return $this->hasMany(Donation::class, 'request_id', 'donation_request_id');
+    }
+    public function donationMatch()
+    {
+        return $this->hasMany(DonationMatches::class, 'request_id', 'donation_request_id');
+    }
+    public function attachment()
+    {
+        return $this->hasMany(Attachment::class, 'owner_id', 'donation_request_id');
+    }
 }

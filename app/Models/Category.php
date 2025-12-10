@@ -11,11 +11,12 @@ class Category extends Model
     use SoftDeletes;
 
     protected $table = 'categories';
+
     protected $primaryKey = 'category_id';
 
     protected $fillable = [
         'category_code',
-        'category_name'
+        'category_name',
     ];
 
     protected $casts = [
@@ -29,8 +30,7 @@ class Category extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (empty($model->category_code))
-            {
+            if (empty($model->category_code)) {
                 $model->category_code = (string) Str::uuid();
             }
         });
@@ -39,5 +39,10 @@ class Category extends Model
     public function donationRequest()
     {
         return $this->hasMany(DonationRequest::class, 'category_id', 'category_id');
+    }
+
+    public function donation()
+    {
+        return $this->hasMany(Donation::class, 'category_id', 'category_id');
     }
 }

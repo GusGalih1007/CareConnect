@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('owner_type', 50);
             $table->unsignedInteger('owner_id');
             $table->text('path');
-            $table->json('meta');
+            $table->json('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

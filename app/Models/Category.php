@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -9,13 +10,13 @@ use Illuminate\Support\Str;
 class Category extends Model
 {
     use SoftDeletes;
-
+    use HasUuids;
     protected $table = 'categories';
-
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $primaryKey = 'category_id';
 
     protected $fillable = [
-        'category_code',
         'category_name',
     ];
 
@@ -24,18 +25,6 @@ class Category extends Model
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->category_code)) {
-                $model->category_code = (string) Str::uuid();
-            }
-        });
-    }
-
     public function donationRequest()
     {
         return $this->hasMany(DonationRequest::class, 'category_id', 'category_id');

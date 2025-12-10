@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('volunteer_tasks', function (Blueprint $table) {
-            $table->increments('volunteer_task_id');
-            $table->unsignedInteger('volunteer_id');
-            $table->unsignedInteger('donation_id');
+            $table->uuid('volunteer_task_id');
+            $table->uuid('volunteer_id');
+            $table->uuid('donation_id');
             $table->enum('status', ['offered', 'accepted', 'picking_up', 'in_transit', 'delivered', 'cancelled'])->default('offered');
             $table->datetime('pickup_time')->nullable();
             $table->dateTime('delivered_at')->nullable();

@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('donations', function (Blueprint $table) {
-            $table->increments('donation_id');
-            $table->uuid('donation_code')->unique();
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('request_id')->nullable();
-            $table->unsignedInteger('category_id')->nullable();
+            $table->uuid('donation_id')->primary();
+            // $table->uuid('donation_code')->unique();
+            $table->uuid('user_id');
+            $table->uuid('request_id')->nullable();
+            $table->uuid('category_id')->nullable();
             $table->string('title', 150);
             $table->text('description')->nullable();
             $table->integer('quantity')->nullable()->default(1);
             $table->enum('condition', ['new', 'good_use', 'needs_repair'])->default('good_use');
             $table->enum('status', ['available', 'reserved', 'picked_up','delivered','cancelled'])->default('available');
-            $table->unsignedInteger('location_id')->nullable();
+            $table->uuid('location_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

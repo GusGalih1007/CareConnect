@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('donation_matches', function (Blueprint $table) {
-            $table->increments('donation_match_id');
-            $table->unsignedInteger('donation_id');
-            $table->unsignedInteger('request_id');
+            $table->uuid('donation_match_id');
+            $table->uuid('donation_id');
+            $table->uuid('request_id');
             $table->integer('score')->default(0);
             $table->timestamps();
             $table->softDeletes();

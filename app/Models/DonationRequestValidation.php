@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use App\Enum\DonationRequestValidationStatus;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DonationRequestValidation extends Model
 {
     use SoftDeletes;
+    use HasUuids;
 
     protected $table = 'donation_request_validations';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $primaryKey = 'donation_request_validation_id';
     protected $fillable = [
         'donation_request_id',
@@ -20,6 +24,8 @@ class DonationRequestValidation extends Model
         'evidence_files',
     ];
     protected $casts = [
+        'donation_request_id' => 'string',
+        'admin_id' => 'string',
         'evidence_files' => 'json',
         'created_at' => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i',

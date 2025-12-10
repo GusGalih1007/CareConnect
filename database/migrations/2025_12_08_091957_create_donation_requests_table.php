@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('donation_requests', function (Blueprint $table) {
-            $table->increments('donation_request_id');
-            $table->uuid('request_code')->unique();
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('category_id')->nullable();
+            $table->uuid('donation_request_id')->primary();
+            // $table->uuid('request_code')->unique();
+            $table->uuid('user_id');
+            $table->uuid('category_id')->nullable();
             $table->string('title', 150);
             $table->text('description')->nullable();
             $table->integer('quantity')->nullable()->default(1);
             $table->enum('condition', ['new', 'good_use', 'needs_repair'])->nullable()->default('good_use');
-            $table->unsignedInteger('location_id')->nullable();
+            $table->uuid('location_id')->nullable();
             $table->enum('priority', ['low', 'normal', 'urgent'])->default('normal');
             $table->enum('status', ['pending', 'active', 'rejected', 'fulfilled'])->default('pending');
             $table->timestamps();

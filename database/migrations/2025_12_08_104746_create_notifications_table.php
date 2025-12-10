@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->increments('notification_id');
-            $table->unsignedInteger('user_id');
+            $table->uuid('notification_id');
+            $table->uuid('user_id');
             $table->string('type', 100);
             $table->json('payload')->nullable();
             $table->boolean('is_read')->default(false);

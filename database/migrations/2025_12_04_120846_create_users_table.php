@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('user_id');
-            $table->uuid('user_code')->unique();
+            $table->uuid('user_id')->primary();
+            // $table->uuid('user_code')->unique();
             $table->string('username', 100);
             $table->string('email');
             $table->string('password');
             $table->string('phone', 20)->nullable();
-            $table->unsignedInteger('role_id');
+            $table->uuid('role_id');
             $table->json('user_type')->nullable(); // if user role is not admin/applocation manager
             $table->string('avatar')->nullable();
             $table->text('bio')->nullable();

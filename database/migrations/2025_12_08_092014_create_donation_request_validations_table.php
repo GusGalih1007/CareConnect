@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('donation_request_validations', function (Blueprint $table) {
-            $table->increments('request_validation_id');
-            $table->unsignedInteger('donation_request_id');
-            $table->unsignedInteger('admin_id')->nullable();
+            $table->uuid('request_validation_id')->primary();
+            $table->uuid('donation_request_id');
+            $table->uuid('admin_id')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected', 'need_revision'])->default('pending');
             $table->text('note')->nullable();
             $table->json('evidence_files')->nullable();

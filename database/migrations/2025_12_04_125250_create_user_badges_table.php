@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_badges', function (Blueprint $table) {
-            $table->increments('user_badge_id');
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('badge_id');
+            $table->uuid('user_badge_id');
+            $table->uuid('user_id');
+            $table->uuid('badge_id');
             $table->timestamp('awarded_at');
             $table->timestamps();
             $table->softDeletes();

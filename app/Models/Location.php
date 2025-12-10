@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Location extends Model
 {
     use SoftDeletes;
+    use HasUuids;
     protected $table = 'locations';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $primaryKey = 'location_id';
     protected $fillable = [
         'user_id',
@@ -17,6 +21,7 @@ class Location extends Model
         'longitude'
     ];
     protected $casts = [
+        'user_id' => 'string',
         'created_at' => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('page_role_actions', function (Blueprint $table) {
-            $table->increments('page_role_actions_id');
+            $table->uuid('page_role_actions_id');
             $table->uuid('page_code');
-            $table->unsignedInteger('role_id');
+            $table->uuid('role_id');
             $table->string('page_name', 150);
             $table->json('action');
             $table->timestamps();

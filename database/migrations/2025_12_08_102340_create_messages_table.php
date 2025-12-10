@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->increments('message_id');
-            $table->uuid('message_code');
-            $table->unsignedInteger('sender_id');
-            $table->unsignedInteger('receiver_id');
+            $table->uuid('message_id')->primary();
+            // $table->uuid('message_code');
+            $table->uuid('sender_id');
+            $table->uuid('receiver_id');
             $table->text('body');
             $table->json('attachments')->nullable();
             $table->boolean('is_read')->default(false);

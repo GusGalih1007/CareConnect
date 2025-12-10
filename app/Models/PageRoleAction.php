@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class PageRoleAction extends Model
 {
+    use HasUuids;
     protected $table = 'page_role_actions';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $primaryKey = 'page_role_actions_id';
     protected $fillable = [
         'page_code',
@@ -16,6 +20,8 @@ class PageRoleAction extends Model
     ];
 
     protected $casts = [
+        'page_code' => 'string',
+        'role_id' => 'string',
         'action' => 'json',
         'created_at' => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i',

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pages', function (Blueprint $table) {
-            $table->increments('page_id');
-            $table->uuid('page_code')->unique();
+            $table->uuid('page_code')->primary();
+            // $table->uuid('page_code')->unique();
             $table->string('page_name', 150);
             $table->json('action');
             $table->string('description')->nullable();

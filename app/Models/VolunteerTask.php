@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use App\Enum\VolunteerTaskStatus;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VolunteerTask extends Model
 {
     use SoftDeletes;
+    use HasUuids;
 
     protected $table = 'volunteer_tasks';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $primaryKey = 'volunteer_task_id';
-
     protected $fillable = [
         'volunteer_id',
         'donation_id',
@@ -23,6 +26,8 @@ class VolunteerTask extends Model
     ];
 
     protected $casts = [
+        'volunteer_id' => 'string',
+        'donation_id' => 'string',
         'proof' => 'json',
         'status' => VolunteerTaskStatus::class,
         'pickup_time' => 'datetime:Y-m-d H:i',

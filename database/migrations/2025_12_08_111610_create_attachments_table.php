@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attachments', function (Blueprint $table) {
-            $table->increments('attachment_id');
+            $table->uuid('attachment_id');
             $table->string('owner_type', 50);
-            $table->unsignedInteger('owner_id');
+            $table->uuid('owner_id');
             $table->text('path');
             $table->json('meta')->nullable();
             $table->timestamps();

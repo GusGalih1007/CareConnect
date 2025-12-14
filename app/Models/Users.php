@@ -34,6 +34,7 @@ class Users extends Authenticatable implements JwtSubject
         'avatar',
         'bio',
         'is_active',
+        'email_verified_at'
     ];
 
     protected $casts = [
@@ -42,6 +43,7 @@ class Users extends Authenticatable implements JwtSubject
         'created_at' => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',
+        'email_verified_at' => 'datetime:Y-m-d H:i',
     ];
 
     public function role()
@@ -93,10 +95,22 @@ class Users extends Authenticatable implements JwtSubject
     {
         return $this->hasMany(VolunteerTask::class, 'volunteer_id', 'user_id');
     }
+    public function financialRequest()
+    {
+        return $this->hasMany(FinancialRequest::class, 'user_id', 'user_id');
+    }
 
     public function donationFinacial()
     {
         return $this->hasMany(DonationFinancial::class, 'donor_id', 'user_id');
+    }
+    public function financialDisbursement()
+    {
+        return $this->hasMany(FinancialDisbursement::class, 'admin_id', 'user_id');
+    }
+    public function adminAction()
+    {
+        return $this->hasMany(AdminAction::class, 'admin_id', 'user_id');
     }
 
     /**

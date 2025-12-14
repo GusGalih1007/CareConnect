@@ -40,8 +40,16 @@ class FinancialRequest extends Model
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(Users::class, 'user_id', 'user_id');
+    }
     public function donationFinancial()
     {
         return $this->hasMany(DonationFinancial::class, 'financial_request_id', 'financial_request_id');
+    }
+    public function financialDisbursement()
+    {
+        return $this->hasMany(FinancialDisbursement::class, 'financial_request_id', 'financial_request_id');
     }
 }

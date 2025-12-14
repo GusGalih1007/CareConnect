@@ -28,7 +28,8 @@ class UserSeeder extends Seeder
             'user_type' => null,
             'avatar' => null,
             'bio' => null,
-            'is_active' => true
+            'is_active' => true,
+            'email_verified_at' => now()
         ]);
     }
 }

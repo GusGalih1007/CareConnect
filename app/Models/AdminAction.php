@@ -31,4 +31,9 @@ class AdminAction extends Model
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
+
+    public function admin()
+    {
+        return $this->belongsTo(Users::class, 'admin_id', 'user_id');
+    }
 }

@@ -37,7 +37,7 @@ class VolunteerTask extends Model
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
 
-    public function user()
+    public function volunteer()
     {
         return $this->belongsTo(Users::class, 'volunteer_id', 'user_id');
     }

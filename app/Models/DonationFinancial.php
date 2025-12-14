@@ -39,7 +39,7 @@ class DonationFinancial extends Model
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
 
-    public function user()
+    public function donor()
     {
         return $this->belongsTo(Users::class, 'donor_id', 'user_id');
     }

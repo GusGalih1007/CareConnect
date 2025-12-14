@@ -14,11 +14,11 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         Role::create([
-            'role_name' => 'user',
+            'role_name' => 'User',
             'description' => 'Default user with limited access'
         ]);
         Role::create([
-            'role_name' => 'volunteer',
+            'role_name' => 'Volunteer',
             'description' => 'Volunteer for delivering packages'
         ]);
     }

@@ -16,7 +16,7 @@ class OtpService
         $otp = (string) random_int(100000, 999999);
 
         OtpCode::where('user_id', $user->getAuthIdentifier())
-            ->where('type', $otpType)
+            ->where('code_type', $otpType)
             ->whereNull('used_at')
             ->delete();
 

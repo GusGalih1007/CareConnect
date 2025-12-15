@@ -8,14 +8,21 @@ use App\Mail\OtpEmail;
 use App\Models\Role;
 use App\Models\Users;
 use App\Services\OtpService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
+
+use function Symfony\Component\Clock\now;
 
 class AuthController extends Controller
 {
+    // Fetch OTP Service
     protected $otpService;
 
     public function __construct(OtpService $otpService)
@@ -25,7 +32,23 @@ class AuthController extends Controller
     }
 
     /**
-     * Register dan generate otp untuk verifikasi email
+     * Summary of registerPage
+     * @return \Illuminate\Contracts\View\View
+     * Purpose
+     * Untuk menampilkan halaman register
+     */
+    public function registerPage()
+    {
+        return view('auth.register');
+    }
+
+    /**
+     * Summary of register
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * Purpose
+     * Untuk proses validasi dan generate OTP
      */
     public function register(Request $request)
     {
@@ -34,50 +57,90 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'required|string|max:20',
+            'aggree_terms' => 'required|accepted'
         ]);
 
         if ($validate->fails()) {
-            return response()->json([
-                'status' => 'errors',
-                'message' => 'Validation error',
-                'data' => $validate->errors(),
-            ], 422);
+            // return response()->json([
+            //     'status' => 'errors',
+            //     'message' => 'Validation error',
+            //     'data' => $validate->errors(),
+            // ], 422);
+            return redirect()->back()
+                ->withErrors($validate)
+                ->withInput($request->except('password', 'password_confirmation'));
         }
 
         try {
 
-            $defaultRole = Role::where('role_name', '=', 'User')->get();
-            $user = Users::create([
-                'username' => $request->username,
+            if (
+                RateLimiter::tooManyAttempts('register-otp:' . $request->ip(), 3)
+            ) {
+                return back()->with('error', 'Terlalu banyak percobaan, coba lagi nanti.');
+            }
+
+            RateLimiter::hit("register-otp:{$request->ip()}", 300);
+
+            $otp = random_int(100000, 999999);
+
+            Mail::to($request->email)->send(new OtpEmail($otp, 'Verifikasi Email'));
+
+            $defaultRole = Role::where('role_name', 'User')->first();
+
+            // $request->session()->put('otp_email', $request->email);
+            $request->session()->put('otp_type', OtpType::Register);
+            $request->session()->put('otp_message', 'Verifikasi email anda');
+            $request->session()->put('register_payload', [
                 'email' => $request->email,
+                'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
-                'role_id' => $defaultRole->role_id,
-                'is_actice' => true,
+                'role_id' => $defaultRole->role_id
             ]);
 
-            $otp = $this->otpService->generate($user, OtpType::Register);
+            Cache::put("register_otp:{$request->email}", Hash::make($otp), Carbon::now()->addMinutes(5));
 
-            Mail::to($user->email)->send(new OtpEmail($otp, 'Verifikasi Email'));
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Registrasi berhasil. Silakan verifikasi email dengan OTP yang dikirim.',
+            //     'data' => [
+            //         'user_id' => $user->user_id,
+            //         'email' => $user->email,
+            //     ],
+            // ], 201);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Registrasi berhasil. Silakan verifikasi email dengan OTP yang dikirim.',
-                'data' => [
-                    'user_id' => $user->user_id,
-                    'email' => $user->email,
-                ],
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Registrasi gagal: '.$e->getMessage(),
-            ], 500);
+            return redirect()->route('verify-otp.form');
+
+        } catch (Exception $e) {
+            // return response()->json([
+            //     'status' => 'error',
+            //     'message' => 'Registrasi gagal: '.$e->getMessage(),
+            // ], 500);
+            return redirect()->back()
+                ->with('error', $e->getMessage());
         }
     }
 
+
     /**
-     * Login user dan generate otp
+     * Summary of loginPage
+     * @return \Illuminate\Contracts\View\View
+     * 
+     * Puspose
+     * Untuk menampilkan halaman login
+     */
+    public function loginPage()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Summary of login
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * Purpose
+     * Untuk proses validasi dan generate OTP
      */
     public function login(Request $request)
     {
@@ -87,143 +150,266 @@ class AuthController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation error',
-                'data' => $validate->errors(),
-            ], 422);
+            // return response()->json([
+            //     'status' => 'error',
+            //     'message' => 'Validation error',
+            //     'data' => $validate->errors(),
+            // ], 422);
+            return redirect()->back()
+                ->withErrors($validate)
+                ->withInput($request->except('password'));
         }
 
-        $userAccount = Users::where('email', $request->email)->first();
+        try {
+            $userAccount = Users::where('email', '=',$request->email)->first();
 
-        if (! $userAccount) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Account with this email is not exist',
-            ], 401);
+            if (!$userAccount) {
+                return redirect()->back()
+                    ->with('error', 'Akun tidak ditemukan, silahkan buat akun')
+                    ->withInput($request->except('password'));
+            }
+
+            if (!Hash::check($request->password, $userAccount->password)) {
+                return redirect()->back()
+                    ->with('error', 'Password salah, silahkan coba lagi')
+                    ->withInput($request->except('password'));
+            }
+
+            if ($userAccount->is_active == false) {
+                return redirect()->back()
+                    ->with('error', 'AKun anda dalam sedang tidak aktif, silahkan hubungi admin')
+                    ->withInput($request->except('password'));
+            }
+
+            $otp = $this->otpService->generate($userAccount, OtpType::Login);
+
+            Mail::to($userAccount->email)->queue(new OtpEmail($otp, 'Verifikasi Login'));
+
+            $request->session()->put('otp_email', $userAccount->email);
+            $request->session()->put('otp_type', OtpType::Login);
+            $request->session()->put('otp_message', 'Verifikasi login');
+
+            return redirect()->route('verify-otp.form');
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage())
+                ->withInput($request->except('password'));
         }
 
-        if (! Hash::check($request->password, $userAccount->password)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Wrong password',
-            ], 401);
-        }
-
-        if ($userAccount->is_active == false) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Your account is inactive. Please contact admin',
-            ], 401);
-        }
-
-        $otp = $this->otpService->generate($userAccount, OtpType::Login);
-
-        Mail::to($userAccount->email)->send(new OtpEmail($otp, 'OTP Login'));
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'OTP telah dikirim ke email Anda',
-            'data' => [
-                'user_id' => $userAccount->user_id,
-                'email' => $userAccount->email,
-                'requires_otp' => true
-            ]
-        ]);
     }
+
+    /**
+     * Summary of verifyOtpForm
+     * @return \Illuminate\Contracts\View\View
+     * 
+     * Purpose
+     * Menampilkan halaman verifikasi OTP
+     */
+    public function verifyOtpForm()
+    {
+        return view('auth.verifyOtp');
+    }
+
     public function verifyOtp(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'email' => 'required|string|email',
-            'otp' => 'required|string|size:6',
-            'otp_type' => 'required|in:login,register,reset_password'
+            'otp' => 'required|size:6'
         ]);
 
-        if ($validate->fails())
+        if (!$validate)
         {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation error',
-                'data' => $validate->errors()
-            ], 422);
+            return redirect()->back()
+            ->withErrors($validate)
+            ->withInput();
         }
 
-        $user = Users::where('email', $request->email)->first();
+        $otpType = session('otp_type');
 
-        if (!$user)
-        {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User tidak ditemukan'
-            ], 404);
+        if (! $otpType) {
+            return redirect()->route('login')->withErrors('OTP tidak valid atau telah kadaluarsa.');
         }
 
-        $otpType = OtpType::from($request->otp_type);
-        $is_valid = $this->otpService->verify($user, $otpType, $request->otp);
-
-        if (!$is_valid)
-        {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Otp tidak valid atau sudah kadaluarsa'
-            ], 400);
-        }
-
-        // Untuk verifikasi email pengguna baru
-        if ($request->otp_type === 'register') {
-            $user->update(['email_verified_at' => now()]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Email telah terverifikasi. Silahkan login ke dengan akun anda',
-            ], 200);
-        }
-
-        // Generate JWT token
-        $token = Auth::login($user);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Verifikasi berhasil',
-            'data' => [
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => auth()->factory()->getTTL() * 60,
-                'user' => $user
-            ]
-        ]);
+        return match ($otpType) {
+            'register' => $this->verifyEmailOtp($request->otp),
+            'login' => $this->verifyLoginOtp($request->otp),
+            'reset_password' => $this->verifyForgotPasswordOtp($request->otp),
+            default => abort(403),
+        };
     }
 
-    public function me()
+    /**
+     * Summary of verifyEmailOtp
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * Purpose
+     * Untuk proses halaman verifikasi OTP untuk registrasi
+     */
+    public function verifyEmailOtp(Request $request)
     {
-        $user = Auth::user()->load('role');
-
-        return response()->json([
-            'success' => true,
-            'data' => $user
+        $validate = Validator::make($request->all(), [
+            // 'email' => 'required|string|email',
+            'otp' => 'required|size:6'
         ]);
+
+        if ($validate->fails()) {
+            // return response()->json([
+            //     'status' => 'error',
+            //     'message' => 'Validation error',
+            //     'data' => $validate->errors()
+            // ], 401);
+            return redirect()->back()
+                ->withErrors($validate)
+                ->withInput();
+        }
+
+        $payload = session('register_payload');
+
+        if (!$payload) {
+            return redirect()->route('register')
+                ->with('error', 'Sesi registrasi berakhir. Mulai ulang registrasi');
+        }
+
+        $userEmail = $payload['email'];
+        $hash = Cache::get("register_otp:{$userEmail}");
+
+        if (!$hash || !Hash::check($request->otp, $hash)) {
+            // return response()->json([], 400);
+            return redirect()->back()
+                ->with('error', 'OTP tidak valid atau telah kadaluarsa')
+                ->withInput();
+        }
+
+        Users::create([
+            ...$payload,
+            'email_verified_at' => now(),
+            'is_active' => true
+        ]);
+
+        Cache::forget("register_otp:{$userEmail}");
+        $request->session()->forget(['otp_type', 'otp_message', 'register_payload']);
+        // $request->session()->put('otp_verified', true);
+
+        return redirect()->route('login.form');
     }
 
-    public function logout()
+    /**
+     * Summary of verifyLoginOtp
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * Purpose
+     * Untuk verifikasi OTP untuk login
+     */
+    public function verifyLoginOtp(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
+            // 'email' => 'required|string|email',
+            'otp' => 'required|size:6'
+        ]);
+
+        if ($validate->fails()) {
+            return redirect()->back()
+                ->withErrors($validate)
+                ->withInput();
+        }
+
+        try {
+            $email = session('otp_email');
+            $otpType = session('otp_type');
+
+            $user = Users::where('email', $email)->first();
+
+            if (!$user) {
+                // return response()->json([
+                //     'status' => 'error',
+                //     'message' => 'User tidak ditemukan'
+                // ], 404);
+                return redirect()->route('login')
+                    ->with('error', 'User tidak ditemukan, Silahkan masukkan email anda')
+                    ->withInput();
+            }
+
+            $is_valid = $this->otpService->verify($user, $otpType, $request->otp);
+
+            if (!$is_valid) {
+                return redirect()->back()
+                    ->with('error', 'Otp tidak valid')
+                    ->withInput();
+            }
+
+            Auth::login($user);
+
+            $request->session()->forget(['otp_email', 'otp_type', 'otp_message']);
+
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Verifikasi berhasil',
+            //     'data' => [
+            //         'access_token' => $token,
+            //         'token_type' => 'bearer',
+            //         'user' => $user
+            //     ]
+            // ]);\
+            return redirect()->route('welcome');
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
+
+    }
+
+
+    /**
+     * Summary of logout
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * Purpose
+     * Untuk proses logout user
+     */
+    public function logout(Request $request)
     {
         Auth::logout();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Berhasil logout'
-        ]);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login.form')
+            ->with('success', 'Anda telah log-out');
     }
 
+    /**
+     * Summary of forgotPasswordForm
+     * @return \Illuminate\Contracts\View\View
+     * 
+     * Purpose
+     * Menampilkan halaman lupa password
+     */
+    public function forgotPasswordForm()
+    {
+        return view('auth.forgotPassword');
+    }
+
+    /**
+     * Summary of forgotPassword
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * Purpose 
+     * Proses validasi email dan generate OTP  
+     */
     public function forgotPassword(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|exists:users,email',
+        $validate = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+        if ($validate->fails()) {
+            return redirect()->back()
+                ->withErrors($validate)
+                ->withInput();
         }
 
         $user = Users::where('email', $request->email)->first();
@@ -232,50 +418,118 @@ class AuthController extends Controller
         $otp = $this->otpService->generate($user, OtpType::ResetPassword);
 
         // Kirim OTP via email
-        Mail::to($user->email)->send(new OtpEMail($otp, 'Reset Password'));
+        Mail::to($user->email)->send(new OtpeMail($otp, 'Reset Password'));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'OTP untuk reset password telah dikirim ke email Anda'
+        // Simpan email di session
+        $request->session()->put('reset_email', $user->email);
+        $request->session()->put('otp_type', OtpType::ResetPassword);
+        $request->session()->put('otp_message', 'Verifikasi lupa password');
+        // $request->session()->put('reset_otp_required', true);
+
+        return redirect()->route('verify-otp.form')
+            ->with('success', 'OTP telah dikirim ke email Anda.');
+    }
+
+    /**
+     * Summary of verifyForgotPasswordOtp
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * Purpose
+     * Proses verifikasi OTP lupa password
+     */
+    public function verifyForgotPasswordOtp(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
+            'otp' => 'required|size:6'
         ]);
+
+        if ($validate->fails()) {
+            return redirect()->back()
+                ->withErrors($validate)
+                ->withInput();
+        }
+
+        try {
+            $email = session('reset_email');
+            $otpType = session('otp_type');
+
+            $user = Users::where('email', $email);
+
+            if (!$user || !$otpType) {
+                return redirect()->back()
+                    ->with('error', 'Sesi reset password berakhir')
+                    ->withInput();
+            }
+
+            $is_valid = $this->otpService->verify($user, $otpType, $request->otp);
+
+            if (!$is_valid) {
+                return redirect()->back()
+                    ->with('error', 'OTP tidak valid atau telah kadaluarsa')
+                    ->withInput();
+            }
+
+            $request->session()->forget(['otp_type', 'otp_message']);
+
+            return redirect()->route('reset-password.form');
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
+    }
+
+    public function resetPasswordForm()
+    {
+        if (!session('reset_email')) {
+            return redirect()->route('forgot-password')
+                ->with('error', 'Sesi reset password telah berakhir. Silahkan coba lagi');
+        }
+
+        return view('auth.resetPassword');
     }
 
     public function resetPassword(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|exists:users,email',
-            'otp' => 'required|string|size:6',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        try {
+            $validate = Validator::make($request->all(), [
+                'password' => 'required|string|min:8|confirmed',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+            if ($validate->fails()) {
+                return redirect()->back()
+                    ->withErrors($validate);
+            }
+
+            $email = session('reset_email');
+
+            $user = Users::where('email', $email)->first();
+
+            if (!$user) {
+                return redirect()->back()
+                    ->with('error', 'User tidak ditemukan. Sesi reset telah berakhir');
+            }
+
+            // Update password
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            $request->session()->forget('reset_email');
+
+            return redirect()->route('login.form')
+                ->with('success', 'Password telah direset. Silahkan login kembali');
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
         }
 
-        $user = Users::where('email', $request->email)->first();
+    }
 
-        // Verify OTP
-        $isValid = $this->otpService->verify($user, OtpType::ResetPassword, $request->otp);
-
-        if (!$isValid) {
-            return response()->json([
-                'success' => false,
-                'message' => 'OTP tidak valid atau telah kadaluarsa'
-            ], 400);
-        }
-
-        // Update password
-        $user->update([
-            'password' => Hash::make($request->password)
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Password berhasil direset. Silakan login kembali.'
-        ]);
+    public function showProfile()
+    {
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
     }
 
     public function updateProfile(Request $request)
@@ -283,25 +537,31 @@ class AuthController extends Controller
         $user = Auth::user();
 
         $validator = Validator::make($request->all(), [
-            'username' => 'sometimes|string|max:100|unique:users,username,' . $user->user_id . ',user_id',
+            'username' => 'required|string|max:100|unique:users,username,' . $user->user_id . ',user_id',
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string|max:500',
-            'avatar' => 'nullable|string',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $update = Users::findOrFail($user->user_id);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $user->update($request->only(['username', 'phone', 'bio', 'avatar']));
+        $data = $request->only(['username', 'phone', 'bio']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Profile berhasil diperbarui',
-            'data' => $user
-        ]);
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = $avatarPath;
+        }
+
+        $update->update($data);
+
+        return redirect()->route('profile')
+            ->with('success', 'Profile berhasil diperbarui.');
     }
 }

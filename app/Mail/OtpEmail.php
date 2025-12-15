@@ -13,7 +13,7 @@ class OtpEmail extends Mailable
     public $otp;
     public $subjectText;
 
-    public function __construct($otp, $subject = 'OTP Verification')
+    public function __construct($otp, $subject = 'Verifikasi OTP')
     {
         $this->otp = $otp;
         $this->subjectText = $subject;
@@ -24,7 +24,8 @@ class OtpEmail extends Mailable
         return $this->subject($this->subjectText)
                     ->view('emails.otp')
                     ->with([
-                        'otp' => $this->otp
+                        'otp' => $this->otp,
+                        'purpose' => $this->subjectText
                     ]);
     }
 }

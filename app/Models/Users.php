@@ -7,14 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Users extends Authenticatable implements JwtSubject
+class Users extends Authenticatable
 {
     use HasFactory;
     use HasUuids;
     use Notifiable;
     use SoftDeletes;
+    use HasApiTokens;
 
     protected $table = 'users';
 
@@ -95,6 +97,7 @@ class Users extends Authenticatable implements JwtSubject
     {
         return $this->hasMany(VolunteerTask::class, 'volunteer_id', 'user_id');
     }
+
     public function financialRequest()
     {
         return $this->hasMany(FinancialRequest::class, 'user_id', 'user_id');
@@ -104,13 +107,30 @@ class Users extends Authenticatable implements JwtSubject
     {
         return $this->hasMany(DonationFinancial::class, 'donor_id', 'user_id');
     }
+
     public function financialDisbursement()
     {
         return $this->hasMany(FinancialDisbursement::class, 'admin_id', 'user_id');
     }
+
     public function adminAction()
     {
         return $this->hasMany(AdminAction::class, 'admin_id', 'user_id');
+    }
+
+    public function otpCode()
+    {
+        return $this->hasMany(OtpCode::class. 'user_id', 'user_id');
+    }
+
+    public function isAdmin()
+    {
+        return $this->role->role_name === 'Super Admin' || $this->role->role_name === 'admin';
+    }
+
+    public function isVolunteer()
+    {
+        return $this->role->role_name === 'volunteer';
     }
 
     /**
@@ -118,18 +138,18 @@ class Users extends Authenticatable implements JwtSubject
      *
      * @return mixed
      */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
+    // public function getJWTIdentifier()
+    // {
+    //     return $this->getKey();
+    // }
 
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
      * @return array
      */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
+    // public function getJWTCustomClaims()
+    // {
+    //     return [];
+    // }
 }

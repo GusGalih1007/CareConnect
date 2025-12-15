@@ -4,7 +4,8 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $user = Auth::user();
+    return view('welcome', compact('user'));
 })->name('welcome');
 
 // Auth
@@ -25,5 +26,9 @@ Route::get('reset-password', [AuthController::class, 'resetPasswordForm'])->name
 Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('reset-password.post');
 
 // Verify OTP
+Route::get('verify-otp/reset', [AuthController::class, 'resetOtp'])->name('reset.otp');
 Route::get('verify-otp', [AuthController::class, 'verifyOtpForm'])->name('verify-otp.form');
 Route::post('verify-otp', [AuthController::class, 'verifyOtp'])->name('verify-otp.post');
+
+// Logout
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');

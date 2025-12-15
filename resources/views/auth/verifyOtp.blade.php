@@ -7,10 +7,15 @@
                 <div class="col-md-10">
                     <div class="card card-transparent shadow-none d-flex justify-content-center mb-0 auth-card">
                         <div class="card-body z-3 px-md-0 px-lg-4">
+                            @if (session('error'))
+                                <div class="alert alert-danger">
+                                    <span class="text-danger">{{ session('error') }}</span>
+                                </div>
+                            @endif
                             <h2 class="mb-2 text-center">OTP Verification</h2>
                             <p class="text-center">Masukan kode OTP yang kami kirim untuk {{ strtolower(session('otp_message')) }}.</p>
                             <form method="POST" class="needs-validation" action="{{ route('verify-otp.post') }}">
-                                @csrf
+                                {{ csrf_field() }}
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -18,6 +23,9 @@
                                             <input type="number" name="otp" class="form-control" id="email"
                                                 aria-describedby="otp" placeholder="Masukan kode OTP" required>
                                         </div>
+                                    </div>
+                                    <div class="col-lg-12 mb-3">
+                                       Tidak mendapatkan kode? <a class="text-underline" href="{{ route('reset.otp') }}">Kirim ulang OTP</a>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-center">

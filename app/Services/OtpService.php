@@ -34,7 +34,7 @@ class OtpService
         Authenticatable $user,
         OtpType $otpType,
         string $inputOtp
-    ): bool {
+    ): array {
         $otp = OtpCode::where('user_id', $user->getAuthIdentifier())
             ->where('code_type', $otpType)
             ->whereNull('used_at')
@@ -42,27 +42,27 @@ class OtpService
             ->first();
 
         if (! $otp) {
-            return false;
+            return ['success' => false, 'reason' => 'OTP not found', 'message' => 'OTP tidak ditemukan'];
         }
 
         if ($otp->isExpired()) {
-            return false;
+            return ['success' => false, 'reason' => 'OTP expired', 'message' => 'OTP telah kadaluarsa'];
         }
 
         if ($otp->attempts >= $otpType->maxAttempts()) {
-            return false;
+            return ['success' => false, 'reason' => 'Max attempts reached', 'message' => 'Terlalu banyak percobaan. Silahkan buat ulang OTP'];
         }
 
         $otp->increment('attempts');
 
-        if (!Hash::check($inputOtp, $otp->code_hash)) {
-            return false;
+        if (! Hash::check($inputOtp, $otp->code_hash)) {
+            return ['success' => false, 'reason' => 'Invalid OTP', 'message' => 'OTP tidak valid. Silahkan buat ulang OTP'];
         }
 
         $otp->update([
             'used_at' => now(),
         ]);
 
-        return true;
+        return ['success' => true, 'reason' => 'OTP verified successfully'];
     }
 }

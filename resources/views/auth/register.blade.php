@@ -23,7 +23,7 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="username" class="form-label">Username</label>
+                                            <label for="username" class="form-label">Username*</label>
                                             <input type="text" class="form-control" name="username" id="username"
                                                 placeholder="Masukan username" required>
                                         </div>
@@ -38,7 +38,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="email" class="form-label">Email</label>
+                                            <label for="email" class="form-label">Email*</label>
                                             <input type="email" class="form-control" name="email" id="email"
                                                 placeholder="Masukan Email" required>
                                         </div>
@@ -53,9 +53,9 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="phone" class="form-label">No. Telepon</label>
+                                            <label for="phone" class="form-label">No. Telepon (Opsional)</label>
                                             <input type="text" class="form-control" name="phone" id="phone"
-                                                placeholder="No. Telepon" required>
+                                                placeholder="No. Telepon">
                                         </div>
                                         <div class="invalid-feedback">
                                             No. telepon perlu diisi
@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="password" class="form-label">Password</label>
+                                            <label for="password" class="form-label">Password*</label>
                                             <input type="password" class="form-control" name="password" id="password"
                                                 placeholder="Masukan password" required>
                                         </div>
@@ -84,7 +84,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="password_confirmation" class="form-label">Konfirmasi
-                                                Password</label>
+                                                Password*</label>
                                             <input type="password" class="form-control" name="password_confirmation"
                                                 id="password_confirmation" placeholder="Konfirmasi password" required>
                                         </div>
@@ -101,7 +101,7 @@
                                         <div class="form-check mb-3">
                                             <input type="checkbox" name="aggree_terms" class="form-check-input" id="aggreeTerms">
                                             <label class="form-check-label" for="aggreeTerms">I agree with the terms of
-                                                use</label>
+                                                use*</label>
                                         </div>
                                     </div>
                                 </div>

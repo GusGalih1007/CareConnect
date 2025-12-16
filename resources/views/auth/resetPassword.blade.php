@@ -8,17 +8,41 @@
                     <div class="card card-transparent shadow-none d-flex justify-content-center mb-0 auth-card">
                         <div class="card-body z-3 px-md-0 px-lg-4">
                             <h2 class="mb-2">Reset Password</h2>
-                            <p>Enter your email address and we'll send you an email with instructions to reset your
-                                password.</p>
-                            <form>
+                            <p>Masukan password anda yang baru serta konfirmasi password tersebut.</p>
+                            <form action="{{ route('reset-password.post') }}" method="POST" class="needs-validation" novalidate>
+                                {{ csrf_field() }}
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <div class="floating-label form-group">
-                                            <label for="email" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email"
-                                                aria-describedby="email" placeholder=" ">
+                                        <div class="form-group">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" name="password" id="password"
+                                                placeholder="Masukan password" required>
                                         </div>
+                                        <div class="invalid-feedback">
+                                            Password perlu diisi
+                                        </div>
+                                        @if ($errors->has('password'))
+                                            <div class="alert alert-danger">
+                                                {{ $errors->first('password') }}
+                                            </div>
+                                        @endif
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="password_confirmation" class="form-label">Konfirmasi
+                                                Password</label>
+                                            <input type="password" class="form-control" name="password_confirmation"
+                                                id="password_confirmation" placeholder="Konfirmasi password" required>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Password perlu dikonfirmasi
+                                        </div>
+                                        @if ($errors->has('password_confirmation'))
+                                            <div class="alert alert-danger">
+                                                {{ $errors->first('password_confirmation') }}
+                                            </div>
+                                        @endif
+                                    </div>  
                                 </div>
                                 <button type="submit" class="btn btn-primary">Reset</button>
                             </form>

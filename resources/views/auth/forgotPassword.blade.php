@@ -7,16 +7,16 @@
                 <div class="col-md-10">
                     <div class="card card-transparent shadow-none d-flex justify-content-center mb-0 auth-card">
                         <div class="card-body z-3 px-md-0 px-lg-4">
-                            <h2 class="mb-2">Reset Password</h2>
-                            <p>Enter your email address and we'll send you an email with instructions to reset your
-                                password.</p>
-                            <form>
+                            <h2 class="mb-2">Lupa Password</h2>
+                            <p>Masukan Email anda. Kami akan mengirimkan OTP untuk reset password anda.</p>
+                            <form action="{{ route('forgot-password.post') }}" method="POST" class="needs-validation" novalidate>
+                                {{ csrf_field() }}
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="floating-label form-group">
                                             <label for="email" class="form-label">Email</label>
                                             <input type="email" class="form-control" id="email"
-                                                aria-describedby="email" placeholder=" ">
+                                                aria-describedby="email" name="email" placeholder="Masukan akun email anda">
                                         </div>
                                     </div>
                                 </div>

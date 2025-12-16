@@ -454,7 +454,7 @@ class AuthController extends Controller
             $email = session('reset_email');
             $otpType = session('otp_type');
 
-            $user = Users::where('email', $email);
+            $user = Users::where('email', '=', $email)->first();
 
             if (! $user || ! $otpType) {
                 return redirect()->back()

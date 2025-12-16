@@ -4,8 +4,10 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    $user = Auth::user();
-    return view('welcome', compact('user'));
+    return redirect()->route('login.form');
+});
+Route::get('/welcome', function () {
+    return view('welcome');
 })->name('welcome');
 
 // Auth

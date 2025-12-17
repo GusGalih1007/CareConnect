@@ -327,11 +327,11 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item"
                                 href="{{ route('user.profile') }}">Profile</a></li>
-                        <li><form action="{{ route('forgot-password.post') }}" method="POST">
+                        {{-- <li><form action="{{ route('forgot-password.post') }}" method="POST">
                             {{ csrf_field() }}
                             <input type="hidden" value="{{ Auth::user()->email }}" name="email">
                             <button type="submit" class="dropdown-item">Reset Password</button>
-                        </form></li>
+                        </form></li> --}}
                         <li>
                             <hr class="dropdown-divider">
                         </li>

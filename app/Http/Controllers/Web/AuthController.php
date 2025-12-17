@@ -255,6 +255,21 @@ class AuthController extends Controller
             $user = Users::find(session('otp_user_id'));
             $type = session('otp_type');
 
+            switch ($type)
+            {
+                case OtpType::Login:
+                    $subject = "Verifikasi Login";
+                    break;
+                case OtpType::Register:
+                    $subject = "Verifikasi Email";
+                    break;
+                case OtpType::ResetPassword:
+                    $subject = 'Reset Password';
+                    break;
+                default:
+                    $subject = "Kode OTP";
+            }
+
             if (!$user || !$type) {
                 return redirect()->route('login.form')
                     ->with('error', 'Sesi OTP berakhir');
@@ -262,7 +277,7 @@ class AuthController extends Controller
 
             $otp = $this->otpService->generate($user, $type);
 
-            Mail::to($user->email)->send(new OtpEmail($otp, 'Kode OTP'));
+            Mail::to($user->email)->send(new OtpEmail($otp, $subject));
 
             return back()->with('success', 'OTP baru telah dikirim');
         } catch (Exception $e) {

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('password');
             $table->string('phone', 20)->nullable();
-            $table->uuid    ('role_id');
+            $table->uuid('role_id');
             $table->json('user_type')->nullable(); // if user role is not admin/applocation manager
             $table->string('avatar')->nullable();
             $table->text('bio')->nullable();

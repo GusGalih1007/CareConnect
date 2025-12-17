@@ -5,9 +5,9 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between">
-                        <div class="d-flex flex-wrap align-items-center">
-                            <div class="profile-img position-relative me-3 mb-3 mb-lg-0 profile-logo profile-logo1">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                        <div class="d-flex align-items-center flex-wrap">
+                            <div class="profile-img position-relative mb-lg-0 profile-logo profile-logo1 mb-3 me-3">
                                 <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
                                     class="theme-color-default-img img-fluid rounded-pill avatar-100">
                                 <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_1.png') }}" alt="User-Profile"
@@ -21,12 +21,12 @@
                                 <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_3.png') }}" alt="User-Profile"
                                     class="theme-color-pink-img img-fluid rounded-pill avatar-100">
                             </div>
-                            <div class="d-flex flex-wrap align-items-center mb-3 mb-sm-0">
-                                <h4 class="me-2 h4">{{ Auth::user()->username }}</h4>
+                            <div class="d-flex align-items-center mb-sm-0 mb-3 flex-wrap">
+                                <h4 class="h4 me-2">{{ Auth::user()->username }}</h4>
                                 <span> - {{ Auth::user()->role->role_name }}</span>
                             </div>
                         </div>
-                        <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
+                        <ul class="d-flex nav nav-pills profile-tab mb-0 text-center" data-toggle="slider-tab"
                             id="profile-pills-tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active show" data-bs-toggle="tab" href="#profile-profile" role="tab"
@@ -115,10 +115,10 @@
                         </div>
                         <div class="card-body">
                             <ul class="list-inline m-0 p-0">
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Paul Molive</h6>
                                         <p class="mb-0">Web Designer</p>
                                     </div>
@@ -128,16 +128,16 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton9">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/05.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Paul Molive</h6>
                                         <p class="mb-0">trainee</p>
                                     </div>
@@ -147,16 +147,16 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton10">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/02.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Anna Mull</h6>
                                         <p class="mb-0">Web Developer</p>
                                     </div>
@@ -166,16 +166,16 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton11">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/03.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Paige Turner</h6>
                                         <p class="mb-0">trainee</p>
                                     </div>
@@ -185,16 +185,16 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton12">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/04.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Barb Ackue</h6>
                                         <p class="mb-0">Web Designer</p>
                                     </div>
@@ -204,16 +204,16 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton13">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/05.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Greta Life</h6>
                                         <p class="mb-0">Tester</p>
                                     </div>
@@ -223,16 +223,16 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton14">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/03.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Ira Membrit</h6>
                                         <p class="mb-0">Android Developer</p>
                                     </div>
@@ -242,16 +242,16 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton15">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
-                                <li class="d-flex mb-4 align-items-center">
+                                <li class="d-flex align-items-center mb-4">
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/02.png') }}" alt="story-img"
                                         class="rounded-pill avatar-40">
-                                    <div class="ms-3 flex-grow-1">
+                                    <div class="flex-grow-1 ms-3">
                                         <h6>Pete Sariya</h6>
                                         <p class="mb-0">Web Designer</p>
                                     </div>
@@ -261,9 +261,9 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
                                             aria-labelledby="dropdownMenuButton16">
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item " href="javascript:void(0);">Block</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
                                         </div>
                                     </div>
                                 </li>
@@ -274,9 +274,9 @@
                 <div id="profile-profile" class="tab-pane fade active show">
                     <div class="card">
                         <div class="card-body">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap">
                                 <div></div>
-                                <ul class="d-flex nav nav-pills mb-0 text-center profile-tab" data-toggle="slider-tab"
+                                <ul class="d-flex nav nav-pills profile-tab mb-0 text-center" data-toggle="slider-tab"
                                     id="profile-pills-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active show" data-bs-toggle="tab" href="#view"
@@ -371,7 +371,7 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <div class="text-center">
+                                        <div class="align-items-center text-center">
                                             <div class="user-profile">
                                                 @if (Auth::user()->avatar)
                                                     <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
@@ -381,14 +381,22 @@
                                                         alt="profile-img" class="rounded-pill avatar-130 img-fluid">
                                                 @endif
                                             </div>
-                                            <div class="mt-3 col-12">
-                                                <div class="form-group col-3">
-                                                    <input class="d-inline-block form-control text-center" value="{{ Auth::user()->username }}">
-                                                </div>
-                                                <div class="user-bio">
-                                                    <p>{{ Auth::user()->bio ?? 'No Biodata' }}</p>
-                                                </div>
-                                             </div>
+                                            <center>
+                                                <div class="mt-3">
+                                                    <div class="form-group col-lg-3 col-md-6 col-sm-12">
+                                                        <input type="file" name="avatar" class="form-control" />
+                                                    </div>
+                                                    </divc>
+                                                    <div class="mt-3">
+                                                        <div class="form-group col-lg-3 col-md-6 col-sm-12">
+                                                            <input class="form-control text-center" name="username"
+                                                                value="{{ Auth::user()->username }}">
+                                                        </div>
+                                                        <div class="form-group col-md-6 col-sm-12">
+                                                            <textarea class="form-control" name="bio" id="description" rows="5" cols="5">{{ Auth::user()->bio ?? 'No Biodata' }}</textarea>
+                                                        </div>
+                                                    </div>
+                                            </center>
                                         </div>
                                     </div>
                                 </div>
@@ -406,6 +414,13 @@
                                         <div class="mt-2">
                                             <h6 class="mb-1">Address:</h6>
                                             @forelse (Auth::user()->location as $location)
+                                            <div class="row">
+                                                <div class="form-group col-md-6 col-sm-12">
+                                                    <select name="province" class="form-select" id="">
+                                                        <option value="" selected hidden>Province</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                                 <p>{{ collect([
                                                     $location?->province?->name,
                                                     $location?->city?->name,
@@ -419,7 +434,10 @@
                                         </div>
                                         <div class="mt-2">
                                             <h6 class="mb-1">Email:</h6>
-                                            <p><a href="#" class="text-body"> {{ Auth::user()->email }}</a></p>
+                                            <div class="form-group col-md-6 col-sm-12">
+                                                <input type="email" name="email" class="form-control"
+                                                    value="{{ Auth::user()->email }}" />
+                                            </div>
                                         </div>
                                         <div class="mt-2">
                                             <h6 class="mb-1">User Type:</h6>
@@ -427,7 +445,10 @@
                                         </div>
                                         <div class="mt-2">
                                             <h6 class="mb-1">Contact:</h6>
-                                            <p><a href="#" class="text-body">{{ Auth::user()->phone }}</a></p>
+                                            <div class="form-group col-md-6 col-sm-12">
+                                                <input type="tel" name="phone" class="form-control"
+                                                    value="{{ Auth::user()->phone }}" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

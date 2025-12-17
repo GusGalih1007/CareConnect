@@ -8,4 +8,5 @@ enum DonationRequestStatus: string
     case Active = 'active';
     case Rejected = 'rejected';
     case Fulfilled = 'fulfilled';
+    case PartiallyFulfilled = 'partially_fulfilled';
 }

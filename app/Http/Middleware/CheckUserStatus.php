@@ -18,6 +18,19 @@ class CheckUserStatus
     {
         $user = Auth::user();
 
+        if (!$user)
+        {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda belum login. Diharapkan login terlebih dahulu.'
+                ], 403);
+            }
+
+            return redirect()->route('login.form')
+                ->with('error', 'Anda belum login. Diharapkan login terlebih dahulu.');
+        }
+
         if ($user && $user->is_active == false)
         {
             Auth::logout();
@@ -29,7 +42,7 @@ class CheckUserStatus
                 ], 403);
             }
 
-            return redirect()->route('login')
+            return redirect()->route('login.form')
                 ->with('error', 'Akun Anda dinonaktifkan. Silakan hubungi admin.');
         }
         

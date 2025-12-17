@@ -1,7 +1,10 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\DashboardController;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 Route::get('/', function () {
     return redirect()->route('login.form');
@@ -33,4 +36,10 @@ Route::get('verify-otp', [AuthController::class, 'verifyOtpForm'])->name('verify
 Route::post('verify-otp', [AuthController::class, 'verifyOtp'])->name('verify-otp.post');
 
 // Logout
-Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('user.status')->group(function () {
+    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
+    Route::get("admin/profile", [AuthController::class, 'showProfile'])->name('user.profile');
+});

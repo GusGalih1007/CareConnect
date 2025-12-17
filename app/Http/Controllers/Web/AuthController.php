@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
 use App\Enum\OtpType;
 use App\Mail\OtpEmail;
@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
 
 use function Symfony\Component\Clock\now;
 
@@ -33,20 +34,20 @@ class AuthController extends Controller
 
     /**
      * Summary of registerPage
-     *
-     * @return \Illuminate\Contracts\View\View
-     *                                         Purpose
-     *                                         Untuk menampilkan halaman register
+     * Purpose
+     * Untuk menampilkan halaman register
      */
     public function registerPage()
     {
+        if (Auth::check())
+        {
+            return redirect()->route('admin.dashboard');
+        }
         return view('auth.register');
     }
 
     /**
      * Summary of register
-     *
-     * @return \Illuminate\Http\RedirectResponse
      *
      * Purpose
      * Untuk proses validasi dan generate OTP
@@ -123,20 +124,20 @@ class AuthController extends Controller
     /**
      * Summary of loginPage
      *
-     * @return \Illuminate\Contracts\View\View
-     *
      * Puspose
      * Untuk menampilkan halaman login
      */
     public function loginPage()
     {
+        if (Auth::check())
+        {
+            return redirect()->route('admin.dashboard');
+        }
         return view('auth.login');
     }
 
     /**
      * Summary of login
-     *
-     * @return \Illuminate\Http\RedirectResponse
      *
      * Purpose
      * Untuk proses validasi dan generate OTP
@@ -146,6 +147,7 @@ class AuthController extends Controller
         $validate = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string|min:8',
+            'remember_me' => 'nullable|boolean'
         ]);
 
         if ($validate->fails()) {
@@ -184,11 +186,16 @@ class AuthController extends Controller
 
             Mail::to($userAccount->email)->send(new OtpEmail($otp, 'Verifikasi Login'));
 
-            session([
-                'otp_user_id' => $userAccount->user_id,
-                'otp_type' => OtpType::Login,
-                'otp_message' => 'Verifikasi login'
-            ]);
+            // session([
+            //     'otp_user_id' => $userAccount->user_id,
+            //     'otp_type' => OtpType::Login,
+            //     'otp_message' => 'Verifikasi login',
+            //     'remember_me' => $request->remember_me
+            // ]);
+            $request->session()->put('otp_user_id', $userAccount->user_id);
+            $request->session()->put('otp_type', OtpType::Login);
+            $request->session()->put('otp_message', 'Verifikasi login');
+            $request->session()->put('remember_me', $request->remember_me);
 
             return redirect()->route('verify-otp.form');
         } catch (Exception $e) {
@@ -203,8 +210,6 @@ class AuthController extends Controller
 
     /**
      * Summary of verifyOtpForm
-     *
-     * @return \Illuminate\Contracts\View\View
      *
      * Purpose
      * Menampilkan halaman verifikasi OTP
@@ -269,9 +274,6 @@ class AuthController extends Controller
     /**
      * Summary of verifyEmailOtp
      *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     *
      * Purpose
      * Untuk proses halaman verifikasi OTP untuk registrasi
      */
@@ -315,9 +317,6 @@ class AuthController extends Controller
     /**
      * Summary of verifyLoginOtp
      *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     *
      * Purpose
      * Untuk verifikasi OTP untuk login
      */
@@ -325,6 +324,8 @@ class AuthController extends Controller
     {
         try {
             $otpType = session('otp_type');
+
+            $rememberMe = session('remember_me');
 
             $user = Users::find(session('otp_user_id'));
 
@@ -341,7 +342,7 @@ class AuthController extends Controller
                     ->with('error', $is_valid['message']);
             }
 
-            Auth::guard('web')->login($user);
+            Auth::guard('web')->login($user, $rememberMe);
             session()->save();
 
             session()->forget(['otp_user_id', 'otp_type', 'otp_message']);
@@ -355,7 +356,7 @@ class AuthController extends Controller
             //         'user' => $user
             //     ]
             // ]);\
-            return redirect()->route('welcome');
+            return redirect()->route('admin.dashboard');
         } catch (Exception $e) {
             return redirect()->back()
                 ->with('error', $e->getMessage())
@@ -366,8 +367,6 @@ class AuthController extends Controller
 
     /**
      * Summary of logout
-     *
-     * @return \Illuminate\Http\RedirectResponse
      *
      * Purpose
      * Untuk proses logout user
@@ -386,20 +385,20 @@ class AuthController extends Controller
     /**
      * Summary of forgotPasswordForm
      *
-     * @return \Illuminate\Contracts\View\View
-     *
      * Purpose
      * Menampilkan halaman lupa password
      */
     public function forgotPasswordForm()
     {
+        if (Auth::check())
+        {
+            return redirect()->route('admin.dashboard');
+        }
         return view('auth.forgotPassword');
     }
 
     /**
      * Summary of forgotPassword
-     *
-     * @return \Illuminate\Http\RedirectResponse
      *
      * Purpose
      * Proses validasi email dan generate OTP
@@ -440,9 +439,6 @@ class AuthController extends Controller
     /**
      * Summary of verifyForgotPasswordOtp
      *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     *
      * Purpose
      * Proses verifikasi OTP lupa password
      */
@@ -479,8 +475,8 @@ class AuthController extends Controller
 
     public function resetPasswordForm()
     {
-        if (!session('reset_email')) {
-            return redirect()->route('forgot-password')
+        if (!session('otp_user_id')) {
+            return redirect()->route('forgot-password.form')
                 ->with('error', 'Sesi reset password telah berakhir. Silahkan coba lagi');
         }
 
@@ -499,9 +495,9 @@ class AuthController extends Controller
                     ->withErrors($validate);
             }
 
-            $email = session('reset_email');
+            $id = session('otp_user_id');
 
-            $user = Users::where('email', $email)->first();
+            $user = Users::findOrFail($id);
 
             if (!$user) {
                 return redirect()->back()
@@ -513,7 +509,7 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            $request->session()->forget('reset_email');
+            Auth::logout();
 
             return redirect()->route('login.form')
                 ->with('success', 'Password telah direset. Silahkan login kembali');
@@ -528,7 +524,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
 
-        return view('profile.edit', compact('user'));
+        return view('dashboard.profile.index', compact('user'));
     }
 
     public function updateProfile(Request $request)

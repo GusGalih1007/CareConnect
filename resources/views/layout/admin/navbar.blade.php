@@ -1,6 +1,6 @@
 <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar">
     <div class="container-fluid navbar-inner">
-        <a href="{{ asset('hope-ui/html/dashboard/index.html') }}" class="navbar-brand">
+        <a href="{{ route('admin.dashboard') }}" class="navbar-brand">
 
             <!--Logo start-->
             <div class="logo-main">
@@ -45,7 +45,7 @@
                 </svg>
             </i>
         </div>
-        <div class="input-group search-input">
+        {{-- <div class="input-group search-input">
             <span class="input-group-text" id="search-input">
                 <svg class="icon-18" width="18" viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -56,7 +56,7 @@
                 </svg>
             </span>
             <input type="search" class="form-control" placeholder="Search...">
-        </div>
+        </div> --}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon">
@@ -67,7 +67,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="mb-2 navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
-                <li class="me-0 me-xl-2">
+                {{-- <li class="me-0 me-xl-2">
                     <a class="btn btn-primary btn-sm d-flex gap-2 align-items-center" aria-current="page"
                         href="http://hopeui.iqonic.design/pro?utm_source=hopeui-free-demo&utm_medium=hopeui-free-demo&utm_campaign=hopeui-pro-launch"
                         target="_blank">
@@ -82,8 +82,8 @@
                         </svg>
                         Go Pro
                     </a>
-                </li>
-                <li class="nav-item dropdown">
+                </li> --}}
+                {{-- <li class="nav-item dropdown">
                     <a href="#" class="search-toggle nav-link" id="dropdownMenuButton2"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="{{ asset('hope-ui/html/assets/images/Flag/flag001.png') }}"
@@ -124,8 +124,8 @@
                             </div>
                         </div>
                     </div>
-                </li>
-                <li class="nav-item dropdown">
+                </li> --}}
+                {{-- <li class="nav-item dropdown">
                     <a href="#" class="nav-link" id="notification-drop" data-bs-toggle="dropdown">
                         <svg class="icon-24" width="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -207,8 +207,8 @@
                             </div>
                         </div>
                     </div>
-                </li>
-                <li class="nav-item dropdown">
+                </li> --}}
+                {{-- <li class="nav-item dropdown">
                     <a href="#" class="nav-link" id="mail-drop" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <svg class="icon-24" width="24" viewBox="0 0 24 24" fill="none"
@@ -298,10 +298,14 @@
                             </div>
                         </div>
                     </div>
-                </li>
+                </li> --}}
                 <li class="nav-item dropdown custom-drop">
                     <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @if (Auth::user()->avatar)
+                        <img src="{{ asset('storage/'. Auth::user()->avatar ) }}" alt="User-Profile"
+                            class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
+                        @else
                         <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
                             class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
                         <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_1.png') }}" alt="User-Profile"
@@ -315,21 +319,24 @@
                         <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_3.png') }}" alt="User-Profile"
                             class="theme-color-pink-img img-fluid avatar avatar-50 avatar-rounded">
                         <div class="caption ms-3 d-none d-md-block ">
-                            <h6 class="mb-0 caption-title">Austin Robertson</h6>
-                            <p class="mb-0 caption-sub-title">Marketing Administrator</p>
+                        @endif
+                            <h6 class="mb-0 caption-title">{{ Auth::user()->username}}</h6>
+                            <p class="mb-0 caption-sub-title">{{ Auth::user()->role->role_name }}</p>
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item"
-                                href="{{ asset('hope-ui/html/dashboard/app/user-profile.html') }}">Profile</a></li>
-                        <li><a class="dropdown-item"
-                                href="{{ asset('hope-ui/html/dashboard/app/user-privacy-setting.html') }}">Privacy
-                                Setting</a></li>
+                                href="{{ route('user.profile') }}">Profile</a></li>
+                        <li><form action="{{ route('forgot-password.post') }}" method="POST">
+                            {{ csrf_field() }}
+                            <input type="hidden" value="{{ Auth::user()->email }}" name="email">
+                            <button type="submit" class="dropdown-item">Reset Password</button>
+                        </form></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li><a class="dropdown-item"
-                                href="{{ asset('hope-ui/html/dashboard/auth/sign-in.html') }}">Logout</a></li>
+                                href="{{ route('logout') }}">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -342,10 +349,10 @@
             <div class="col-md-12">
                 <div class="flex-wrap d-flex justify-content-between align-items-center">
                     <div>
-                        <h1>Hello Devs!</h1>
-                        <p>We are on a mission to help developers like you build successful projects for FREE.</p>
+                        <h1>Halo {{ Auth::user()->username }}!</h1>
+                        <p>Ayo mulai bekerja hari ini!</p>
                     </div>
-                    <div>
+                    {{-- <div>
                         <a href="" class="btn btn-link btn-soft-light">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -358,7 +365,7 @@
                             </svg>
                             Announcements
                         </a>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

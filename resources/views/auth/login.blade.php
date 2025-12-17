@@ -15,7 +15,7 @@
                             <h2 class="mb-2 text-center">Log in</h2>
                             <p class="text-center">Login untuk memulai donasi.</p>
                             <form action="{{ route('login.post') }}" method="POST" class="needs-validation" novalidate>
-                                @csrf
+                                {{ csrf_field() }}
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -48,10 +48,10 @@
                                         </div>
                                     @endif
                                     <div class="col-lg-12 d-flex justify-content-between">
-                                        {{-- <div class="form-check mb-3">
-                                        <input type="checkbox" class="form-check-input" id="customCheck1">
+                                        <div class="form-check mb-3">
+                                        <input type="checkbox" name="remember_me" value="true" class="form-check-input" id="customCheck1">
                                         <label class="form-check-label" for="customCheck1">Remember Me</label>
-                                    </div> --}}
+                                    </div>
                                         <a href="{{ route('forgot-password.form') }}">Lupa password?</a>
                                     </div>
                                 </div>

@@ -7,6 +7,11 @@
                 <div class="col-md-10">
                     <div class="card card-transparent shadow-none d-flex justify-content-center mb-0 auth-card">
                         <div class="card-body z-3 px-md-0 px-lg-4">
+                            @if (session('error'))
+                                <div class="alert alert-danger">
+                                    <span class="text-danger">{{ session('error') }}</span>
+                                </div>
+                            @endif
                             <h2 class="mb-2">Reset Password</h2>
                             <p>Masukan password anda yang baru serta konfirmasi password tersebut.</p>
                             <form action="{{ route('reset-password.post') }}" method="POST" class="needs-validation" novalidate>

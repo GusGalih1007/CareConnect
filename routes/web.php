@@ -38,8 +38,11 @@ Route::post('verify-otp', [AuthController::class, 'verifyOtp'])->name('verify-ot
 // Logout
 
 Route::middleware('user.status')->group(function () {
+    Route::get('admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
+    // Profile
     Route::get("admin/profile", [AuthController::class, 'showProfile'])->name('user.profile');
+    Route::put("admin/profile/change-password", [AuthController::class, 'changePassword'])->name('user.profile.changePassword');
+    Route::put("admin/profile/profile-update", [AuthController::class, 'updateProfile'])->name('user.profile.update');
 });

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('location_id')->primary();
             $table->uuid('user_id');
             $table->string('address')->nullable();
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 10, 8)->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -25,13 +25,23 @@ class Category extends Model
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',
     ];
-    public function donationRequest()
+
+    // public function donationRequest()
+    // {
+    //     return $this->hasMany(DonationRequest::class, 'category_id', 'category_id');
+    // }
+
+    // public function donation()
+    // {
+    //     return $this->hasMany(Donation::class, 'category_id', 'category_id');
+    // }
+    public function requestItem()
     {
-        return $this->hasMany(DonationRequest::class, 'category_id', 'category_id');
+        return $this->hasMany(DonationRequestItems::class, 'category_id', 'category_id');
     }
 
-    public function donation()
+    public function donationItem()
     {
-        return $this->hasMany(Donation::class, 'category_id', 'category_id');
+        return $this->hasMany(DonationItems::class, 'category_id', 'category_id');
     }
 }

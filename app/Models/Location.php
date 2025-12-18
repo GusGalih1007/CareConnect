@@ -23,10 +23,6 @@ class Location extends Model
         'address',
         'latitude',
         'longitude',
-        'province_code',
-        'city_code',
-        'district_code',
-        'village_code',
     ];
     protected $casts = [
         'user_id' => 'string',
@@ -47,21 +43,5 @@ class Location extends Model
     public function donation()
     {
         return $this->hasMany(Donation::class, 'location_id', 'location_id');
-    }
-    public function province()
-    {
-        return $this->belongsTo(Province::class, 'province_code', 'code');
-    }
-    public function city()
-    {
-        return $this->belongsTo(City::class, 'province_code', 'code');
-    }
-    public function district()
-    {
-        return $this->belongsTo(District::class, 'province_code', 'code');
-    }
-    public function village()
-    {
-        return $this->belongsTo(Village::class, 'province_code', 'code');
     }
 }

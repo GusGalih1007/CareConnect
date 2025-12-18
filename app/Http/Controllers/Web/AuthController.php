@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 use function Symfony\Component\Clock\now;
 
@@ -39,8 +40,7 @@ class AuthController extends Controller
      */
     public function registerPage()
     {
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
         return view('auth.register');
@@ -129,8 +129,7 @@ class AuthController extends Controller
      */
     public function loginPage()
     {
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
         return view('auth.login');
@@ -255,8 +254,7 @@ class AuthController extends Controller
             $user = Users::find(session('otp_user_id'));
             $type = session('otp_type');
 
-            switch ($type)
-            {
+            switch ($type) {
                 case OtpType::Login:
                     $subject = "Verifikasi Login";
                     break;
@@ -405,8 +403,7 @@ class AuthController extends Controller
      */
     public function forgotPasswordForm()
     {
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
         return view('auth.forgotPassword');
@@ -547,10 +544,11 @@ class AuthController extends Controller
         $user = Auth::user();
 
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:100|unique:users,username,' . $user->user_id . ',user_id',
+            'username' => 'nullable|string|max:100|unique:users,username,' . $user->user_id . ',user_id',
+            'email' => 'nullable|string|email|unique:users,email,' . $user->user_id . ',user_id',
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string|max:500',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $update = Users::findOrFail($user->user_id);
@@ -561,7 +559,7 @@ class AuthController extends Controller
                 ->withInput();
         }
 
-        $data = $request->only(['username', 'phone', 'bio']);
+        $data = $request->only(['username', 'phone', 'bio', 'email']);
 
         // Handle avatar upload
         if ($request->hasFile('avatar')) {
@@ -571,7 +569,77 @@ class AuthController extends Controller
 
         $update->update($data);
 
-        return redirect()->route('profile')
+        return redirect()->route('user.profile')
             ->with('success', 'Profile berhasil diperbarui.');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login.form')->with('error', 'Anda belum login. Diharapkan login terlebih dahulu');
+        }
+
+        $validate = Validator::make($request->all(), [
+            'current_password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'confirmed', 'min:8']
+        ]);
+
+        if ($validate->fails()) {
+            return redirect()->back()->withErrors($validate);
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            // dd(Hash::check($request->current_password, $user->password));
+            return redirect()->back()->with('error', 'Password anda salah.');
+        }
+
+        try {
+            $update = Users::findOrFail($user->user_id);
+
+            $update->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            Auth::logout();
+
+            return redirect()->route('login.form')->with('success', 'Ganti password telah berhasil. Silahkan login kembali');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function changeLocation(Request $request)
+    {
+        $user = Auth::user();
+
+        $validate = Validator::make($request->all(), [
+            'item' => ['required', 'array', 'min:1'],
+            'item.*.address' => ['required', 'string'],
+        ], [
+            'item.required' => 'Tambahkan minimal satu alamat',
+            'item.*.address.required' => 'Alamat wajib diisi',
+        ]);
+
+        if ($validate->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validate)
+                ->withInput()
+                ->with('error', 'Ada kesalahan di dalam form yang anda tulis. Silahkan periksa kembali dan coba lagi.');
+        }
+
+        try
+        {
+            DB::beginTransaction();
+
+            foreach ($request->item as $item)
+            {
+                
+            }
+        } catch (Exception $e) {
+
+        }
     }
 }

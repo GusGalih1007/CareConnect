@@ -7,9 +7,16 @@
                 <div class="col-md-10">
                     <div class="card card-transparent shadow-none d-flex justify-content-center mb-0 auth-card">
                         <div class="card-body z-3 px-md-0 px-lg-4">
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <span class="text-success">{{ session('success') }}</span>
+                                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif
                             @if (session('error'))
-                                <div class="alert alert-danger">
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                     <span class="text-danger">{{ session('error') }}</span>
+                                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
                             <h2 class="mb-2 text-center">Log in</h2>

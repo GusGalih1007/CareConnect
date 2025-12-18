@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enum\DonationCondition;
 use App\Enum\DonationStatus;
+use App\Enum\DonationType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -20,11 +21,12 @@ class Donation extends Model
     protected $fillable = [
         'user_id',
         'request_id',
-        'category_id',
+        // 'category_id',
         'title',
-        'description',
-        'quantity',
-        'condition',
+        'general_description',
+        // 'quantity',
+        // 'condition',
+        'donation_type',
         'status',
         'location_id',
     ];
@@ -32,13 +34,14 @@ class Donation extends Model
     protected $casts = [
         'user_id' => 'string',
         'request_id' => 'string',
-        'category_id' => 'string',
+        // 'category_id' => 'string',
         'location_id' => 'string',
         'created_at' => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i',
         'deleted_at' => 'datetime:Y-m-d H:i',
         'status' => DonationStatus::class,
-        'condition' => DonationCondition::class,
+        'donation_type' => DonationType::class,
+        // 'condition' => DonationCondition::class,
     ];
 
     public function user()
@@ -56,10 +59,10 @@ class Donation extends Model
         return $this->hasMany(DonationMatches::class, 'donation_id', 'donation_id');
     }
 
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'category_id', 'category_id');
-    }
+    // public function category()
+    // {
+    //     return $this->belongsTo(Category::class, 'category_id', 'category_id');
+    // }
 
     public function location()
     {
@@ -68,5 +71,10 @@ class Donation extends Model
     public function volunteerTask()
     {
         return $this->hasMany(VolunteerTask::class, 'donation_id', 'donation_id');
+    }
+
+    public function donationItem()
+    {
+        return $this->hasMany(DonationItems::class, 'donation_id', 'donation_id');
     }
 }

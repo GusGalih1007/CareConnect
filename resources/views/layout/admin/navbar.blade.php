@@ -300,33 +300,34 @@
                     </div>
                 </li> --}}
                 <li class="nav-item dropdown custom-drop">
-                    <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         @if (Auth::user()->avatar)
-                        <img src="{{ asset('storage/'. Auth::user()->avatar ) }}" alt="User-Profile"
-                            class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="User-Profile"
+                                class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
                         @else
-                        <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
-                            class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
-                        <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_1.png') }}" alt="User-Profile"
-                            class="theme-color-purple-img img-fluid avatar avatar-50 avatar-rounded">
-                        <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_2.png') }}" alt="User-Profile"
-                            class="theme-color-blue-img img-fluid avatar avatar-50 avatar-rounded">
-                        <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_4.png') }}" alt="User-Profile"
-                            class="theme-color-green-img img-fluid avatar avatar-50 avatar-rounded">
-                        <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_5.png') }}" alt="User-Profile"
-                            class="theme-color-yellow-img img-fluid avatar avatar-50 avatar-rounded">
-                        <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_3.png') }}" alt="User-Profile"
-                            class="theme-color-pink-img img-fluid avatar avatar-50 avatar-rounded">
-                        <div class="caption ms-3 d-none d-md-block ">
+                            <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
+                                class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
+                            <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_1.png') }}" alt="User-Profile"
+                                class="theme-color-purple-img img-fluid avatar avatar-50 avatar-rounded">
+                            <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_2.png') }}" alt="User-Profile"
+                                class="theme-color-blue-img img-fluid avatar avatar-50 avatar-rounded">
+                            <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_4.png') }}" alt="User-Profile"
+                                class="theme-color-green-img img-fluid avatar avatar-50 avatar-rounded">
+                            <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_5.png') }}"
+                                alt="User-Profile"
+                                class="theme-color-yellow-img img-fluid avatar avatar-50 avatar-rounded">
+                            <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_3.png') }}"
+                                alt="User-Profile"
+                                class="theme-color-pink-img img-fluid avatar avatar-50 avatar-rounded">
                         @endif
-                            <h6 class="mb-0 caption-title">{{ Auth::user()->username}}</h6>
+                        <div class="caption ms-3 d-none d-md-block ">
+                            <h6 class="mb-0 caption-title">{{ Auth::user()->username }}</h6>
                             <p class="mb-0 caption-sub-title">{{ Auth::user()->role->role_name }}</p>
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item"
-                                href="{{ route('user.profile') }}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('user.profile') }}">Profile</a></li>
                         {{-- <li><form action="{{ route('forgot-password.post') }}" method="POST">
                             {{ csrf_field() }}
                             <input type="hidden" value="{{ Auth::user()->email }}" name="email">
@@ -335,8 +336,7 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item"
-                                href="{{ route('logout') }}">Logout</a></li>
+                        <li><a class="dropdown-item" href="{{ route('logout') }}">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -352,6 +352,20 @@
                         <h1>Halo {{ Auth::user()->username }}!</h1>
                         <p>Ayo mulai bekerja hari ini!</p>
                     </div>
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span class="text-success">{{ session('success') }}</span>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span class="text-danger">{{ session('error') }}</span>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
                     {{-- <div>
                         <a href="" class="btn btn-link btn-soft-light">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"

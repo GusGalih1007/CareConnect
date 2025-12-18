@@ -17,9 +17,10 @@ return new class extends Migration
             $table->uuid('user_id');
             // $table->uuid('category_id')->nullable();
             $table->string('title', 150);
-            // $table->text('description')->nullable();
+            $table->text('general_description')->nullable();
             // $table->integer('quantity')->nullable()->default(1);
             // $table->enum('condition', ['new', 'good_use', 'needs_repair'])->nullable()->default('good_use');
+            $table->enum('donation_type', ['single_item', 'multiple_items'])->default('single_item');
             $table->uuid('location_id')->nullable();
             $table->enum('priority', ['low', 'normal', 'urgent'])->default('normal');
             $table->enum('status', ['pending', 'active', 'rejected', 'fulfilled'])->default('pending');

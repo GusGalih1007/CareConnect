@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enum\UserType;
 use App\Models\Role;
 use App\Models\Users;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -25,7 +26,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('123456789'),
             'phone' => '088978789090',
             'role_id' => $roleData->role_id,
-            'user_type' => null,
+            'user_type' => json_encode('administrator'),
             'avatar' => null,
             'bio' => null,
             'is_active' => true,

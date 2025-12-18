@@ -8,18 +8,23 @@
                     <div class="d-flex align-items-center justify-content-between flex-wrap">
                         <div class="d-flex align-items-center flex-wrap">
                             <div class="profile-img position-relative mb-lg-0 profile-logo profile-logo1 mb-3 me-3">
-                                <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
-                                    class="theme-color-default-img img-fluid rounded-pill avatar-100">
-                                <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_1.png') }}" alt="User-Profile"
-                                    class="theme-color-purple-img img-fluid rounded-pill avatar-100">
-                                <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_2.png') }}" alt="User-Profile"
-                                    class="theme-color-blue-img img-fluid rounded-pill avatar-100">
-                                <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_4.png') }}" alt="User-Profile"
-                                    class="theme-color-green-img img-fluid rounded-pill avatar-100">
-                                <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_5.png') }}" alt="User-Profile"
-                                    class="theme-color-yellow-img img-fluid rounded-pill avatar-100">
-                                <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_3.png') }}" alt="User-Profile"
-                                    class="theme-color-pink-img img-fluid rounded-pill avatar-100">
+                                @if (Auth::user()->avatar)
+                                    <img src="{{ asset('storage/'. Auth::user()->avatar) }}" alt="User-Profile"
+                                        class="img-fluid rounded-pill avatar-100">
+                                @else
+                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
+                                        class="theme-color-default-img img-fluid rounded-pill avatar-100">
+                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_1.png') }}"
+                                        alt="User-Profile" class="theme-color-purple-img img-fluid rounded-pill avatar-100">
+                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_2.png') }}"
+                                        alt="User-Profile" class="theme-color-blue-img img-fluid rounded-pill avatar-100">
+                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_4.png') }}"
+                                        alt="User-Profile" class="theme-color-green-img img-fluid rounded-pill avatar-100">
+                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_5.png') }}"
+                                        alt="User-Profile" class="theme-color-yellow-img img-fluid rounded-pill avatar-100">
+                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/avtar_3.png') }}"
+                                        alt="User-Profile" class="theme-color-pink-img img-fluid rounded-pill avatar-100">
+                                @endif
                             </div>
                             <div class="d-flex align-items-center mb-sm-0 mb-3 flex-wrap">
                                 <h4 class="h4 me-2">{{ Auth::user()->username }}</h4>
@@ -55,17 +60,19 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="" method="post" class="needs-validation" novalidate>
+                            <form action="{{ route('user.profile.changePassword') }}" method="post"
+                                class="needs-validation" novalidate>
                                 {{ csrf_field() }}
+                                @method('PUT')
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="current_password" class="form-label">Current Password</label>
-                                            <input type="password"
-                                                class="form-control @error('current_password') is-invalid @enderror"
-                                                id="current_password" name="current_password" required>
+                                            <input type="password" class="form-control" id="current_password"
+                                                name="current_password" required>
+                                            <div class="invalid-feedback">Current password is required</div>
                                             @error('current_password')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -75,8 +82,9 @@
                                             <input type="password"
                                                 class="form-control @error('password') is-invalid @enderror" id="password"
                                                 name="password" required>
+                                            <div class="invalid-feedback">New Password is required</div>
                                             @error('password')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -85,6 +93,10 @@
                                             <label for="password_confirmation" class="form-label">Confirm Password</label>
                                             <input type="password" class="form-control" id="password_confirmation"
                                                 name="password_confirmation" required>
+                                            <div class="invalid-feedback">Password need to be confirmed</div>
+                                            @error('password_confirmation')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -92,14 +104,14 @@
                                 <div class="alert alert-warning">
                                     <small>
                                         <i class="fas fa-info-circle me-1"></i>
-                                        Make sure your new password is different from your current password. You will also
+                                        Make sure your new password is different from your current password. You also will
                                         logout from your account
                                     </small>
                                 </div>
 
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-warning">
-                                        <i class="fas fa-key me-2"></i>Ubah Password
+                                        Change Password
                                     </button>
                                 </div>
                             </form>
@@ -360,8 +372,8 @@
                             </div>
                         </div>
                         <div id="edit" class="tab-pane fade">
-                            <form action="" method="post" enctype="multipart/form-data" class="needs-validation"
-                                novalidate>
+                            <form action="{{ route('user.profile.update') }}" method="post"
+                                enctype="multipart/form-data" class="needs-validation" novalidate>
                                 {{ csrf_field() }}
                                 @method('PUT')
                                 <div class="card">
@@ -393,7 +405,7 @@
                                                                 value="{{ Auth::user()->username }}">
                                                         </div>
                                                         <div class="form-group col-md-6 col-sm-12">
-                                                            <textarea class="form-control" name="bio" id="description" rows="5" cols="5">{{ Auth::user()->bio ?? 'No Biodata' }}</textarea>
+                                                            <textarea class="form-control text-center" name="bio" id="description" rows="5" cols="5">{{ Auth::user()->bio }}</textarea>
                                                         </div>
                                                     </div>
                                             </center>
@@ -414,13 +426,6 @@
                                         <div class="mt-2">
                                             <h6 class="mb-1">Address:</h6>
                                             @forelse (Auth::user()->location as $location)
-                                            <div class="row">
-                                                <div class="form-group col-md-6 col-sm-12">
-                                                    <select name="province" class="form-select" id="">
-                                                        <option value="" selected hidden>Province</option>
-                                                    </select>
-                                                </div>
-                                            </div>
                                                 <p>{{ collect([
                                                     $location?->province?->name,
                                                     $location?->city?->name,
@@ -428,6 +433,7 @@
                                                     $location?->village?->name,
                                                 ])->filter()->join(', ') }}
                                                 </p>
+                                                <button class="btn btn-warning"></button>
                                             @empty
                                                 <p>Empty</p>
                                             @endforelse
@@ -449,6 +455,11 @@
                                                 <input type="tel" name="phone" class="form-control"
                                                     value="{{ Auth::user()->phone }}" />
                                             </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-primary">
+                                                Save
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

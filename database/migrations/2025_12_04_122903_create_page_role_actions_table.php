@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('page_code')->references('page_code')->on('pages')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('role_id')->references('role_id')->on('roles')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

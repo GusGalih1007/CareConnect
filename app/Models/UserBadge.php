@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserBadge extends Model
 {
-    use SoftDeletes;
     use HasUuids;
 
     protected $table = 'user_badges';

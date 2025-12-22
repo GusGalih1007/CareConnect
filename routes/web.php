@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\LocationController;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -45,4 +46,6 @@ Route::middleware('user.status')->group(function () {
     Route::get("admin/profile", [AuthController::class, 'showProfile'])->name('user.profile');
     Route::put("admin/profile/change-password", [AuthController::class, 'changePassword'])->name('user.profile.changePassword');
     Route::put("admin/profile/profile-update", [AuthController::class, 'updateProfile'])->name('user.profile.update');
+    Route::post('admin/profile/add-address', [LocationController::class, 'store'])->name('user.location.store');
+    Route::delete('admin/profile/delete-address/{id}', [LocationController::class, 'destroy'])->name('user.location.delete');
 });

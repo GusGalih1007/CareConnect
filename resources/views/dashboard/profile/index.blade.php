@@ -9,7 +9,7 @@
                         <div class="d-flex align-items-center flex-wrap">
                             <div class="profile-img position-relative mb-lg-0 profile-logo profile-logo1 mb-3 me-3">
                                 @if (Auth::user()->avatar)
-                                    <img src="{{ asset('storage/'. Auth::user()->avatar) }}" alt="User-Profile"
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="User-Profile"
                                         class="img-fluid rounded-pill avatar-100">
                                 @else
                                     <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="User-Profile"
@@ -39,7 +39,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#profile-change-password" role="tab"
-                                    aria-selected="false">Change Password</a>
+                                    aria-selected="false">Ganti Password</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#profile-friends" role="tab"
@@ -56,7 +56,7 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Change Password</h4>
+                                <h4 class="card-title">Ganti Password</h4>
                             </div>
                         </div>
                         <div class="card-body">
@@ -67,10 +67,10 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="current_password" class="form-label">Current Password</label>
+                                            <label for="current_password" class="form-label">Password Saat Ini</label>
                                             <input type="password" class="form-control" id="current_password"
                                                 name="current_password" required>
-                                            <div class="invalid-feedback">Current password is required</div>
+                                            <div class="invalid-feedback">Kamu perlu memasukan password lama</div>
                                             @error('current_password')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -78,11 +78,11 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="password" class="form-label">New Password</label>
+                                            <label for="password" class="form-label">Password Baru</label>
                                             <input type="password"
                                                 class="form-control @error('password') is-invalid @enderror" id="password"
                                                 name="password" required>
-                                            <div class="invalid-feedback">New Password is required</div>
+                                            <div class="invalid-feedback">Password baru wajib diisi</div>
                                             @error('password')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -90,10 +90,10 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                            <label for="password_confirmation" class="form-label">Konfirmasi Password Baru</label>
                                             <input type="password" class="form-control" id="password_confirmation"
                                                 name="password_confirmation" required>
-                                            <div class="invalid-feedback">Password need to be confirmed</div>
+                                            <div class="invalid-feedback">Password baru harus dikonfirmasi</div>
                                             @error('password_confirmation')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -103,9 +103,8 @@
 
                                 <div class="alert alert-warning">
                                     <small>
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Make sure your new password is different from your current password. You also will
-                                        logout from your account
+                                        Harap pastikan agar password baru anda tidak sama dengan password lama anda.
+                                         Anda juga akan logout dan diharapkan login kembali dengan password baru
                                     </small>
                                 </div>
 
@@ -334,38 +333,34 @@
                             <div class="card">
                                 <div class="card-header">
                                     <div class="header-title">
-                                        <h4 class="card-title">About User</h4>
+                                        <h4 class="card-title">Tentang Pengguna</h4>
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="mt-2">
-                                        <h6 class="mb-1">Joined:</h6>
+                                        <h6 class="mb-1">Bergabung:</h6>
                                         <p>{{ Auth::user()->created_at->format('Y/m/d') }}</p>
                                     </div>
                                     <div class="mt-2">
-                                        <h6 class="mb-1">Address:</h6>
-                                        @forelse (Auth::user()->location as $location)
-                                            <p>{{ collect([
-                                                $location?->province?->name,
-                                                $location?->city?->name,
-                                                $location?->district?->name,
-                                                $location?->village?->name,
-                                            ])->filter()->join(', ') }}
-                                            </p>
-                                        @empty
-                                            <p>Empty</p>
-                                        @endforelse
+                                        <h6 class="mb-1">Alamat:</h6>
+                                        <ul>
+                                            @forelse (Auth::user()->location as $location)
+                                                <li>{{ $location->address }}</li>
+                                            @empty
+                                                <p>Kosong</p>
+                                            @endforelse
+                                        </ul>
                                     </div>
                                     <div class="mt-2">
                                         <h6 class="mb-1">Email:</h6>
                                         <p><a href="#" class="text-body"> {{ Auth::user()->email }}</a></p>
                                     </div>
                                     <div class="mt-2">
-                                        <h6 class="mb-1">User Type:</h6>
+                                        <h6 class="mb-1">Tipe Pengguna:</h6>
                                         <p>{{ Auth::user()->user_type ?? 'Administrator' }}</p>
                                     </div>
                                     <div class="mt-2">
-                                        <h6 class="mb-1">Contact:</h6>
+                                        <h6 class="mb-1">No. Telp:</h6>
                                         <p><a href="#" class="text-body">{{ Auth::user()->phone }}</a></p>
                                     </div>
                                 </div>
@@ -405,7 +400,8 @@
                                                                 value="{{ Auth::user()->username }}">
                                                         </div>
                                                         <div class="form-group col-md-6 col-sm-12">
-                                                            <textarea class="form-control text-center" name="bio" id="description" rows="5" cols="5">{{ Auth::user()->bio }}</textarea>
+                                                            <textarea class="form-control text-center" name="bio" id="description" rows="5" cols="5"
+                                                                placeholder="Biodata">{{ Auth::user()->bio }}</textarea>
                                                         </div>
                                                     </div>
                                             </center>
@@ -415,28 +411,64 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="header-title">
-                                            <h4 class="card-title">About User</h4>
+                                            <h4 class="card-title">Tentang Pengguna</h4>
                                         </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="mt-2">
-                                            <h6 class="mb-1">Joined:</h6>
+                                            <h6 class="mb-1">Bergabung:</h6>
                                             <p>{{ Auth::user()->created_at->format('Y/m/d') }}</p>
                                         </div>
                                         <div class="mt-2">
-                                            <h6 class="mb-1">Address:</h6>
-                                            @forelse (Auth::user()->location as $location)
-                                                <p>{{ collect([
-                                                    $location?->province?->name,
-                                                    $location?->city?->name,
-                                                    $location?->district?->name,
-                                                    $location?->village?->name,
-                                                ])->filter()->join(', ') }}
-                                                </p>
-                                                <button class="btn btn-warning"></button>
-                                            @empty
-                                                <p>Empty</p>
-                                            @endforelse
+                                            <h6 class="mb-1">Alamat:</h6>
+                                            <div class="row">
+                                                @forelse (Auth::user()->location as $index => $location)
+                                                    <div class="form-group col-md-6 col-sm-12">
+                                                        <input type="hidden" name="location[{{ $index }}][id]"
+                                                            value="{{ $location->location_id }}">
+                                                        <textarea class="form-control" name="location[{{ $index }}][address]">{{ $location->address }}</textarea>
+                                                    </div>
+                                                    <div class="form-group col-md-6 col-sm-12">
+                                                        <a href="#deleteAddress{{ $location->location_id }}"
+                                                            class="btn btn-danger btn-sm" data-bs-toggle="modal">Hapus Alamat</a>
+                                                    </div>
+                                                    <div class="modal fade"
+                                                        id="deleteAddress{{ $location->location_id }}" tabindex="-1"
+                                                        aria-labelledby="deleteAddressLabel" aria-hidden="true"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <form action="{{ route('user.location.delete', $location->location_id) }}"
+                                                                    method="POST">
+                                                                    {{ csrf_field() }}
+                                                                    @method('DELETE')
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="deleteAddressLabel">
+                                                                            Delete Confirmation</h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="text-bold">
+                                                                            Apakah anda serius ingin menghapus alamat ini?
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Batalkan</button>
+                                                                        <button type="submit" class="btn btn-danger">Iya</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @empty
+                                                    <p>Empty</p>
+                                                @endforelse
+                                            </div>
+                                            <a href="#addAddress" class="btn btn-primary btn-sm"
+                                                data-bs-toggle="modal">Tambah Alamat</a>
                                         </div>
                                         <div class="mt-2">
                                             <h6 class="mb-1">Email:</h6>
@@ -446,11 +478,11 @@
                                             </div>
                                         </div>
                                         <div class="mt-2">
-                                            <h6 class="mb-1">User Type:</h6>
+                                            <h6 class="mb-1">Tipe Pengguna:</h6>
                                             <p>{{ Auth::user()->user_type ?? 'Administrator' }}</p>
                                         </div>
                                         <div class="mt-2">
-                                            <h6 class="mb-1">Contact:</h6>
+                                            <h6 class="mb-1">No. Telp:</h6>
                                             <div class="form-group col-md-6 col-sm-12">
                                                 <input type="tel" name="phone" class="form-control"
                                                     value="{{ Auth::user()->phone }}" />
@@ -458,12 +490,46 @@
                                         </div>
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-primary">
-                                                Save
+                                                Simpan
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div class="modal fade" id="addAddress" tabindex="-1" aria-labelledby="addAddressLabel"
+                            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <form action="{{ route('user.location.store') }}" class="needs-validation" novalidate
+                                        method="POST">
+                                        {{ csrf_field() }}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addAddressLabel">Tambah Alamat</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label for="address" class="form-label">Alamat Baru</label>
+                                                            <textarea name="address" class="form-control" id="address" cols="10" rows="10"
+                                                                placeholder="Alamat baru" required></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Batalkan</button>
+                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

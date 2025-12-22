@@ -17,7 +17,6 @@ return new class extends Migration
             $table->uuid('badge_id');
             $table->timestamp('awarded_at');
             $table->timestamps();
-            $table->softDeletes();
 
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('badge_id')->references('badge_id')->on('badges')->onDelete('cascade')->onUpdate('cascade');

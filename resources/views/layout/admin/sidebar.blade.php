@@ -1,6 +1,6 @@
 <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all ">
     <div class="sidebar-header d-flex align-items-center justify-content-start">
-        <a href="{{ asset('hope-ui/html/dashboard/index.html') }}" class="navbar-brand">
+        <a href="{{ route('admin.dashboard') }}" class="navbar-brand">
 
             <!--Logo start-->
             <div class="logo-main">

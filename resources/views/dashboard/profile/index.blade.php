@@ -41,10 +41,6 @@
                                 <a class="nav-link" data-bs-toggle="tab" href="#profile-change-password" role="tab"
                                     aria-selected="false">Ganti Password</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#profile-friends" role="tab"
-                                    aria-selected="false">Friends</a>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -60,7 +56,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('user.profile.changePassword') }}" method="post"
+                            <form action="{{ route('admin.profile.changePassword') }}" method="post"
                                 class="needs-validation" novalidate>
                                 {{ csrf_field() }}
                                 @method('PUT')
@@ -114,171 +110,6 @@
                                     </button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-                </div>
-                <div id="profile-friends" class="tab-pane fade">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="header-title">
-                                <h4 class="card-title">Friends</h4>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-inline m-0 p-0">
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/01.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Paul Molive</h6>
-                                        <p class="mb-0">Web Designer</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton9" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton9">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/05.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Paul Molive</h6>
-                                        <p class="mb-0">trainee</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton10" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton10">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/02.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Anna Mull</h6>
-                                        <p class="mb-0">Web Developer</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton11" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton11">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/03.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Paige Turner</h6>
-                                        <p class="mb-0">trainee</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton12" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton12">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/04.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Barb Ackue</h6>
-                                        <p class="mb-0">Web Designer</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton13" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton13">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/05.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Greta Life</h6>
-                                        <p class="mb-0">Tester</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton14" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton14">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/03.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Ira Membrit</h6>
-                                        <p class="mb-0">Android Developer</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton15" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton15">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex align-items-center mb-4">
-                                    <img src="{{ asset('hope-ui/html/assets/images/avatars/02.png') }}" alt="story-img"
-                                        class="rounded-pill avatar-40">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6>Pete Sariya</h6>
-                                        <p class="mb-0">Web Designer</p>
-                                    </div>
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle" id="dropdownMenuButton16" data-bs-toggle="dropdown"
-                                            aria-expanded="false" role="button">
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu-friends"
-                                            aria-labelledby="dropdownMenuButton16">
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfollow</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Unfriend</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Block</a>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -367,7 +198,7 @@
                             </div>
                         </div>
                         <div id="edit" class="tab-pane fade">
-                            <form action="{{ route('user.profile.update') }}" method="post"
+                            <form action="{{ route('admin.profile.update') }}" method="post"
                                 enctype="multipart/form-data" class="needs-validation" novalidate>
                                 {{ csrf_field() }}
                                 @method('PUT')
@@ -438,7 +269,7 @@
                                                         data-bs-backdrop="static" data-bs-keyboard="false">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
-                                                                <form action="{{ route('user.location.delete', $location->location_id) }}"
+                                                                <form action="{{ route('admin.location.delete', $location->location_id) }}"
                                                                     method="POST">
                                                                     {{ csrf_field() }}
                                                                     @method('DELETE')
@@ -501,7 +332,7 @@
                             aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content">
-                                    <form action="{{ route('user.location.store') }}" class="needs-validation" novalidate
+                                    <form action="{{ route('admin.location.store') }}" class="needs-validation" novalidate
                                         method="POST">
                                         {{ csrf_field() }}
                                         <div class="modal-header">

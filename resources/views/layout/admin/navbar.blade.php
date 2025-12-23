@@ -327,7 +327,7 @@
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{{ route('user.profile') }}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.profile') }}">Profile</a></li>
                         {{-- <li><form action="{{ route('forgot-password.post') }}" method="POST">
                             {{ csrf_field() }}
                             <input type="hidden" value="{{ Auth::user()->email }}" name="email">
@@ -348,24 +348,26 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="flex-wrap d-flex justify-content-between align-items-center">
-                    <div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
                         <h1>Halo {{ Auth::user()->username }}!</h1>
                         <p>Ayo mulai bekerja hari ini!</p>
                     </div>
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <span class="text-success">{{ session('success') }}</span>
-                            <button class="btn-close" type="button" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <span class="text-danger">{{ session('error') }}</span>
-                            <button class="btn-close" type="button" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
-                    @endif
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <span class="text-success">{{ session('success') }}</span>
+                                <button class="btn-close" type="button" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <span class="text-danger">{{ session('error') }}</span>
+                                <button class="btn-close" type="button" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+                    </div>
                     {{-- <div>
                         <a href="" class="btn btn-link btn-soft-light">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"

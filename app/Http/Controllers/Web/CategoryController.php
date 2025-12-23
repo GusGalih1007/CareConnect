@@ -11,14 +11,93 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+    private function logInfo(string $message, array $context = [])
+    {
+        Log::info('[Web] [CategoryController] ' . $message, $context);
+    }
+
+    private function logError(string $message, \Throwable $e = null, array $context = [])
+    {
+        Log::error(
+            '[Web] [CategoryController] ' . $message,
+            array_merge(
+                [
+                    'exception' => $e?->getMessage(),
+                    'trace' => $e?->getTraceAsString(),
+                ],
+                $context,
+            ),
+        );
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $data = Category::get();
+        try
+        {
+            $data = Category::get();
+    
+            return view('dashboard.category.index', compact('data'));
+        } catch (Exception $e) {
+            $this->logError('Failed viewing index view', $e, [
+                'success' => false
+            ]);
+            return redirect()->back()->with('error', 'Terjadi kesalahan dalam sistem. Coba lagi nanti');
+        }
+    }
 
-        return view('', compact('data'));
+    public function trashed()
+    {
+        try
+        {
+            $data = Category::onlyTrashed()->get();
+
+            return view('dashboard.category.trash', compact('data'));
+        } catch (Exception $e) {
+            $this->logError('Failed viewing trash view', $e, [
+                'success' => false
+            ]);
+
+            return redirect()->back()->with('error', 'Gagal memuat halaman. Coba lagi nanti');
+        }
+    }
+
+    public function restoreById($id)
+    {
+        try
+        {
+            $data = Category::onlyTrashed()->findOrFail($id);
+
+            if (!$data)
+            {
+                return redirect()->back()->with('error', 'Data tidak ditemukan');
+            }
+
+            $data->restore();
+
+            return redirect()->back()->with('success', 'Data berhasil dipulihkan');
+        } catch (Exception $e) {
+            $this->logError('Failed to restore data', $e, [
+                'id' => $id
+            ]);
+            return redirect()->back()->with('error', 'Gagal memulihkan data. Kesalahan dalam sistem');
+        }
+    }
+
+    public function restoreAll()
+    {
+        try
+        {
+            $data = Category::onlyTrashed();
+
+            $data->restore();
+
+            return redirect()->route('admin.category.index')->with('success', 'Semua data telah dipulihkan');
+        } catch (Exception $e) {
+            $this->logError('Failed to restore all data', $e, []);
+            return redirect()->back()->with('error', 'Gagal memulihkan semua data. Kesalahan dalam sistem');
+        }
     }
 
     /**
@@ -26,9 +105,17 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $data = null;
-
-        return view('', compact('data'));
+        try
+        {
+            $data = null;
+    
+            return view('dashboard.category.form', compact('data'));
+        } catch (Exception $e) {
+            $this->logError('Failed viewing create view', $e, [
+                'success' => false
+            ]);
+            return redirect()->back()->with('error', 'Gagal memuat halaman. Coba lagi nanti');
+        }
     }
 
     /**
@@ -36,6 +123,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->logInfo('Category store attempt', [
+            'payload' => $request->all()
+        ]);
+
         $validate = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:100', 'unique:categories,category_name']
         ]);
@@ -47,13 +138,19 @@ class CategoryController extends Controller
 
         try
         {
-            Category::create([
+            $created = Category::create([
                 'category_name' => $request->name
             ]);
 
-            return redirect()->route('')->with('success', 'Data berhasil Ditambahkan');
+            $this->logInfo('Store data successfull', [
+                'result' => $created
+            ]);
+
+            return redirect()->route('admin.category.index')->with('success', 'Data berhasil Ditambahkan');
         } catch (Exception $e) {
-            Log::error('Something wrong while creating data: ' . $e->getMessage());
+            $this->logError('Error attempting store data', $e, [
+                'payload' => $request->all()
+            ]);
             return redirect()->back()->with('error', 'Data gagal ditambahkan. Terjadi kesalahan dalam sistem');
         }
     }
@@ -71,7 +168,22 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try
+        {
+            $data = Category::findOrFail($id);
+
+            if (!$data)
+            {
+                return redirect()->back()->with('error', 'Data tidak ditemukan');
+            }
+            return view('dashboard.category.form', compact('data'));
+        } catch (Exception $e) {
+            $this->logError('Failed viewing edit view', $e, [
+                'success' => false
+            ]);
+
+            return redirect()->back()->with('error', 'Gagal masuk halaman edit. Coba lagi nanti');
+        }
     }
 
     /**
@@ -79,7 +191,44 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validate = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:100', 'unique:categories,category_id,' . $id . ',category_id']
+        ]);
+
+        if ($validate->fails())
+        {
+            return redirect()->back()->withErrors($validate)->with('error', 'Lengkapi data penting sebelum simpan');
+        }
+
+        $this->logInfo('Update data attempt', [
+            'id' => $id,
+            'payload' => $request->all()
+        ]);
+
+        try
+        {
+            $data = Category::findOrFail($id);
+
+            if (!$data)
+            {
+                return redirect()->back()->with('error', 'Data tidak ditemukan.');
+            }
+
+            $data->update([
+                'category_name' => $request->name
+            ]);
+
+            $this->logInfo('Data updated successfully', [
+                'result' => $data
+            ]);
+
+            return redirect()->route('admin.category.index')->with('success', 'Data berhasil di edit');
+        } catch (Exception $e) {
+            $this->logError('Failed updating data', $e, [
+                'payload' => $request->all()
+            ]);
+            return redirect()->back()->with('error', 'Gagal merubah data. Coba lagi nanti');
+        }
     }
 
     /**
@@ -87,6 +236,26 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try
+        {
+            $this->logInfo('Delete data attempt', [
+                'category_id' => $id 
+            ]);
+    
+            $data = Category::findOrFail($id);
+    
+            $data->delete();
+    
+            $this->logInfo('Data deleted successfully', [
+                'success' => true
+            ]);
+    
+            return redirect()->route('admin.category.index')->with('success', 'Data berhasil dihapus');
+        } catch (Exception $e) {
+            $this->logError('Failed deleting data', $e, [
+                'id' => $id
+            ]);
+            return redirect()->back()->with('error', 'Gagal menghapus data. Coba lagi nanti');
+        }
     }
 }

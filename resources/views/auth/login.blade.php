@@ -56,8 +56,8 @@
                                     @endif
                                     <div class="col-lg-12 d-flex justify-content-between">
                                         <div class="form-check mb-3">
-                                        <input type="checkbox" name="remember_me" value="true" class="form-check-input" id="customCheck1">
-                                        <label class="form-check-label" for="customCheck1">Remember Me</label>
+                                        <input type="checkbox" name="remember_me" value="true" class="form-check-input" id="rememberMe">
+                                        <label class="form-check-label" for="rememberMe">Remember Me</label>
                                     </div>
                                         <a href="{{ route('forgot-password.form') }}">Lupa password?</a>
                                     </div>

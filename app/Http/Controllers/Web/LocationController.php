@@ -9,9 +9,28 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class LocationController extends Controller
 {
+    private function logInfo(string $message, array $context = [])
+    {
+        Log::info('[Web] [DonationRequestController] ' . $message, $context);
+    }
+
+    private function logError(string $message, \Throwable $e = null, array $context = [])
+    {
+        Log::error(
+            '[Web] [DonationRequestController] ' . $message,
+            array_merge(
+                [
+                    'exception' => $e?->getMessage(),
+                    'trace' => $e?->getTraceAsString(),
+                ],
+                $context,
+            ),
+        );
+    }
 
     protected $geoCodingService;
     public function __construct(GeocodingService $geoCodingService)
@@ -53,6 +72,9 @@ class LocationController extends Controller
 
         if ($validate->fails())
         {
+            $this->logError('Validation Error', null, [
+                'error' => $validate->errors()
+            ]);
             return redirect()->back()->withErrors($validate);
         }
 

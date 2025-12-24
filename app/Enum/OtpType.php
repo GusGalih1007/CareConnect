@@ -9,6 +9,11 @@ enum OtpType:string
     case ResetPassword = 'reset_password';
     case SensitiveAction = 'sensitive_action';
 
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
     public function ttl(): int
     {
         return match ($this) {

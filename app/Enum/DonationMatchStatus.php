@@ -8,4 +8,9 @@ enum DonationMatchStatus: string
     case Accepted = 'accepted';
     case Rejected = 'rejected';
     case Fulfilled = 'fulfilled';
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
 }

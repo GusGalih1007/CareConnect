@@ -6,4 +6,9 @@ enum DonationType: string
 {
     case Single = 'single_item';
     case Multi = 'multiple_items';
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
 }

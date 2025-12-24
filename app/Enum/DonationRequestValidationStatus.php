@@ -8,4 +8,9 @@ enum DonationRequestValidationStatus: string
     case Approved = 'approved';
     case Rejected = 'rejected';
     case NeedRevision = 'need_revision';
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
 }

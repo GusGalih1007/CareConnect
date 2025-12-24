@@ -32,6 +32,8 @@ class DonationRequestItems extends Model
     ];
 
     protected $casts = [
+        'quantity' => 'integer',
+        'fulfilled_quantity' => 'integer',
         'donation_request_id' => 'string',
         'category_id' => 'string',
         'preferred_condition' => DonationRequestCondition::class,
@@ -42,7 +44,7 @@ class DonationRequestItems extends Model
         'deleted_at' => 'datatime:Y-m-d H:i',
     ];
 
-    public function donationRequest()
+    public function request()
     {
         return $this->belongsTo(DonationRequest::class, 'donation_request_id', 'donation_request_id');
     }
@@ -50,5 +52,37 @@ class DonationRequestItems extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'category_id');
+    }
+
+    public function itemMatches()
+    {
+        return $this->hasMany(DonationItemMatch::class, 'donation_request_item_id', 'donation_request_item_id');
+    }
+
+    // Helper methods
+    public function getRemainingQuantityAttribute()
+    {
+        return $this->quantity - $this->fulfilled_quantity;
+    }
+
+    public function isFulfilled()
+    {
+        return $this->fulfilled_quantity >= $this->quantity;
+    }
+
+    public function isPartiallyFulfilled()
+    {
+        return $this->fulfilled_quantity > 0 && $this->fulfilled_quantity < $this->quantity;
+    }
+
+    public function updateFulfilledQuantity($quantity)
+    {
+        $this->fulfilled_quantity += $quantity;
+        if ($this->fulfilled_quantity >= $this->quantity) {
+            $this->status = DonationRequestStatus::Fulfilled;
+        } elseif ($this->fulfilled_quantity > 0) {
+            $this->status = DonationRequestStatus::PartiallyFulfilled;
+        }
+        $this->save();
     }
 }

@@ -9,4 +9,9 @@ enum DonationRequestStatus: string
     case Rejected = 'rejected';
     case Fulfilled = 'fulfilled';
     case PartiallyFulfilled = 'partially_fulfilled';
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
 }

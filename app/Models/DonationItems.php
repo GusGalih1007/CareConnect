@@ -31,6 +31,8 @@ class DonationItems extends Model
     ];
 
     protected $casts = [
+        'quantity' => 'integer',
+        'reserved_quantity' => 'integer',
         'donation_id' => 'string',
         'category_id' => 'string',
         'condition' => DonationCondition::class,
@@ -49,5 +51,45 @@ class DonationItems extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'category_id');
+    }
+
+    public function itemMatches()
+    {
+        return $this->hasMany(DonationItemMatch::class, 'donation_item_id', 'donation_item_id');
+    }
+
+    // Helper methods
+    public function getAvailableQuantityAttribute()
+    {
+        return $this->quantity - $this->reserved_quantity;
+    }
+
+    public function isAvailable()
+    {
+        return $this->status == DonationStatus::Available && $this->getAvailableQuantityAttribute() > 0;
+    }
+
+    public function reserveQuantity($quantity)
+    {
+        if ($quantity > $this->getAvailableQuantityAttribute()) {
+            return false;
+        }
+
+        $this->reserved_quantity += $quantity;
+        if ($this->reserved_quantity >= $this->quantity) {
+            $this->status = DonationStatus::Reserved;
+        }
+        $this->save();
+
+        return true;
+    }
+
+    public function releaseQuantity($quantity)
+    {
+        $this->reserved_quantity = max(0, $this->reserved_quantity - $quantity);
+        if ($this->reserved_quantity < $this->quantity) {
+            $this->status = DonationStatus::Available;
+        }
+        $this->save();
     }
 }

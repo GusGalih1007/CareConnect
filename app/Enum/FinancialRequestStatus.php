@@ -11,4 +11,9 @@ enum FinancialRequestStatus: string
     case Funded = 'funded';
     case Disbursed = 'disbursed';
     case Closed = 'closed';
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
 }

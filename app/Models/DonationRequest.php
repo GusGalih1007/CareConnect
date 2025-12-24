@@ -63,8 +63,13 @@ class DonationRequest extends Model
     {
         return $this->belongsTo(Location::class, 'location_id', 'location_id');
     }
+    
+    public function items()
+    {
+        return $this->hasMany(DonationRequestItems::class, 'donation_request_id', 'donation_request_id');
+    }
 
-    public function donationRequestValidation()
+    public function validation()
     {
         return $this->hasMany(DonationRequestValidation::class, 'donation_request_id', 'donation_request_id');
     }
@@ -74,7 +79,7 @@ class DonationRequest extends Model
         return $this->hasMany(Donation::class, 'request_id', 'donation_request_id');
     }
 
-    public function donationMatch()
+    public function matches()
     {
         return $this->hasMany(DonationMatches::class, 'request_id', 'donation_request_id');
     }
@@ -84,8 +89,63 @@ class DonationRequest extends Model
         return $this->hasMany(Attachment::class, 'owner_id', 'donation_request_id');
     }
 
-    public function requestItem()
+    public function itemMatches()
     {
-        return $this->hasMany(DonationRequestItems::class, 'donation_request_id', 'donation_request_id');
+        return $this->hasManyThrough(
+            DonationItemMatch::class,
+            DonationRequestItems::class,
+            'donation_request_id', // Foreign key on donation_request_items table
+            'donation_request_item_id', // Foreign key on donation_item_matches table
+            'donation_request_id', // Local key on donation_requests table
+            'donation_request_item_id' // Local key on donation_request_items table
+        );
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('status', DonationRequestStatus::Active);
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', DonationRequestStatus::Pending);
+    }
+
+    public function scopeUrgent($query)
+    {
+        return $query->where('priority', DonationRequestPriority::Urgent);
+    }
+
+     // Helper methods
+    public function isPending()
+    {
+        return $this->status == DonationRequestStatus::Pending ;
+    }
+
+    public function isActive()
+    {
+        return $this->status == DonationRequestStatus::Active;
+    }
+
+    public function isFulfilled()
+    {
+        return $this->status == DonationRequestStatus::Fulfilled;
+    }
+
+    public function getTotalItemsAttribute()
+    {
+        return $this->items->sum('quantity');
+    }
+
+    public function getFulfilledItemsAttribute()
+    {
+        return $this->items->sum('fulfilled_quantity');
+    }
+
+    public function getProgressPercentageAttribute()
+    {
+        if ($this->getTotalItemsAttribute() == 0) return 0;
+        return round(($this->getFulfilledItemsAttribute() / $this->getTotalItemsAttribute()) * 100);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enum\DonationRequestPriority;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Exception;
@@ -40,10 +41,10 @@ class CategoryController extends Controller
     
             return view('dashboard.category.index', compact('data'));
         } catch (Exception $e) {
-            $this->logError('Failed viewing index view', $e, [
+            $this->logError('Failed rendering index page', $e, [
                 'success' => false
             ]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan dalam sistem. Coba lagi nanti');
+            return redirect()->back()->with('error', 'Gagal memuat halaman. Coba lagi nanti');
         }
     }
 
@@ -55,7 +56,7 @@ class CategoryController extends Controller
 
             return view('dashboard.category.trash', compact('data'));
         } catch (Exception $e) {
-            $this->logError('Failed viewing trash view', $e, [
+            $this->logError('Failed rendering trash page', $e, [
                 'success' => false
             ]);
 
@@ -111,7 +112,7 @@ class CategoryController extends Controller
     
             return view('dashboard.category.form', compact('data'));
         } catch (Exception $e) {
-            $this->logError('Failed viewing create view', $e, [
+            $this->logError('Failed rendering create page', $e, [
                 'success' => false
             ]);
             return redirect()->back()->with('error', 'Gagal memuat halaman. Coba lagi nanti');
@@ -133,7 +134,10 @@ class CategoryController extends Controller
 
         if ($validate->fails())
         {
-            return redirect()->back()->withErrors($validate)->withInput();
+            $this->logError('Validation Error', null, [
+                'error' => $validate->errors()
+            ]);
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', 'Lengkapi data penting sebelum simpan');
         }
 
         try
@@ -178,7 +182,7 @@ class CategoryController extends Controller
             }
             return view('dashboard.category.form', compact('data'));
         } catch (Exception $e) {
-            $this->logError('Failed viewing edit view', $e, [
+            $this->logError('Failed rendering edit page', $e, [
                 'success' => false
             ]);
 
@@ -197,6 +201,9 @@ class CategoryController extends Controller
 
         if ($validate->fails())
         {
+            $this->logError('Validation Error', null, [
+                'error' => $validate->errors()
+            ]);
             return redirect()->back()->withErrors($validate)->with('error', 'Lengkapi data penting sebelum simpan');
         }
 

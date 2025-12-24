@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DonationItemMatch extends Model
 {
     use HasUuids;
-    // use SoftDeletes;
+    use SoftDeletes;
 
     protected $table = 'donation_item_matches';
     public $incrementing = false;
@@ -26,8 +26,36 @@ class DonationItemMatch extends Model
     ];
 
     protected $casts = [
+        'matched_quantity' => 'integer',
+        'score' => 'integer',
         'donation_item_id' => 'string',
         'donation_request_item_id' => 'string',
         'status' => DonationMatchStatus::class,
     ];
+
+    public function donationItem()
+    {
+        return $this->belongsTo(DonationItems::class, 'donation_item_id', 'donation_item_id');
+    }
+
+    public function requestItem()
+    {
+        return $this->belongsTo(DonationRequestItems::class, 'donation_request_item_id', 'donation_request_item_id');
+    }
+
+    // Helper methods
+    public function isPending()
+    {
+        return $this->status == DonationMatchStatus::Pending;
+    }
+
+    public function isAccepted()
+    {
+        return $this->status == DonationMatchStatus::Accepted;
+    }
+
+    public function isRejected()
+    {
+        return $this->status == DonationMatchStatus::Rejected;
+    }
 }

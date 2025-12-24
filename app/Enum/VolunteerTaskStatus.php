@@ -10,4 +10,9 @@ enum VolunteerTaskStatus: string
     case InTransit = 'in_transit';
     case Delivered = 'delivered';
     case Cancelled = 'cancelled';
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
 }

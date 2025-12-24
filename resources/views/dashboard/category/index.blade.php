@@ -9,7 +9,7 @@
                         <h4 class="card-title">List Data Kategori</h4>
                     </div>
                     <div>
-                        <a href="{{ route('admin.category.trash') }}" class="btn btn-info">Tempat Sampah</a>
+                        <a href="{{ route('admin.category.trash') }}" class="btn btn-info">Tong Sampah</a>
                         <a href="{{ route('admin.category.create') }}" class="btn btn-primary">Tambah</a>
                     </div>
                 </div>

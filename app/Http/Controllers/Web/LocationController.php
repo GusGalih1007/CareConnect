@@ -86,8 +86,8 @@ class LocationController extends Controller
             Location::create([
                 'user_id' => $user->user_id,
                 'address' => $request->address,
-                'latitude' => $coordinate['latitude'],
-                'longitude' => $coordinate['longitude'],
+                'latitude' => $coordinate['latitude'] ?? null,
+                'longitude' => $coordinate['longitude'] ?? null,
             ]);
 
             return redirect()->back()->with('success', 'Alamat baru telah ditambahkan');

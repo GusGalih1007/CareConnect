@@ -19,11 +19,11 @@
         @forelse($allData as $request)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">{{ Str::limit($request->title, 30) }}</h5>
+                    <div class="card-header bg-primary d-flex justify-content-between align-items-center">
+                        <h4 class="mb-4 text-white">{{ Str::limit($request->title, 30) }}</h4>
                         <span
-                            class="badge bg-{{ $request->status == 'pending' ? 'warning' : ($request->status == 'active' ? 'success' : 'secondary') }}">
-                            {{ ucfirst($request->status) }}
+                            class="mb-4 badge bg-{{ $request->status->value == 'pending' ? 'warning' : ($request->status->value == 'active' ? 'success' : 'secondary') }}">
+                            {{ ucfirst($request->status->value) }}
                         </span>
                     </div>
                     <div class="card-body">
@@ -31,8 +31,8 @@
 
                         <div class="mb-3">
                             <span
-                                class="badge badge-{{ $request->priority == 'urgent' ? 'danger' : ($request->priority == 'normal' ? 'primary' : 'secondary') }}">
-                                {{ ucfirst($request->priority) }}
+                                class="badge bg-{{ $request->priority->value == 'urgent' ? 'danger' : ($request->priority->value == 'normal' ? 'primary' : 'secondary') }}">
+                                {{ ucfirst($request->priority->value) }}
                             </span>
                             <span class="badge bg-info ms-2">
                                {{ $request->items->count() }} barang

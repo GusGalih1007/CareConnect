@@ -178,7 +178,7 @@
                                             @forelse (Auth::user()->location as $location)
                                                 <li>{{ $location->address }}</li>
                                             @empty
-                                                <p>Kosong</p>
+                                                <li>Kosong</li>
                                             @endforelse
                                         </ul>
                                     </div>

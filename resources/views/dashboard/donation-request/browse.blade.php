@@ -35,7 +35,7 @@
                         <option value="">Semua Priorities</option>
                         <option value="urgent" {{ request('priority') == 'urgent' ? 'selected' : '' }}>Urgent</option>
                         <option value="normal" {{ request('priority') == 'normal' ? 'selected' : '' }}>Normal</option>
-                        <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Rendah</option>
+                        <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
                     </select>
                 </div>
                 
@@ -43,9 +43,9 @@
                     <label for="condition" class="form-label">Kondisi</label>
                     <select class="form-select" id="condition" name="condition">
                         <option value="">Semua Kondisi</option>
-                        <option value="new" {{ request('condition') == 'new' ? 'selected' : '' }}>Baru</option>
-                        <option value="good_used" {{ request('condition') == 'good_used' ? 'selected' : '' }}>Baik</option>
-                        <option value="needs_repair" {{ request('condition') == 'needs_repair' ? 'selected' : '' }}>Perlu Perbaikan</option>
+                        <option value="new" {{ request('condition') == 'new' ? 'selected' : '' }}>New</option>
+                        <option value="good_used" {{ request('condition') == 'good_used' ? 'selected' : '' }}>Good Used</option>
+                        <option value="needs_repair" {{ request('condition') == 'needs_repair' ? 'selected' : '' }}>Need Repair</option>
                     </select>
                 </div>
                 
@@ -73,29 +73,30 @@
         @foreach($requests as $request)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">{{ Str::limit($request->title, 25) }}</h5>
-                        <span class="badge badge-{{ $request->priority == 'urgent' ? 'danger' : ($request->priority == 'normal' ? 'primary' : 'secondary') }}">
-                            {{ ucfirst($request->priority) }}
-                        </span>
+                    <div class="card-header bg-primary d-flex justify-content-between align-items-center">
+                        <h4 class="text-white mb-4">{{ Str::limit($request->title, 25) }}</h4>
+                        <h5 class="mb-4 badge bg-{{ $request->priority->value == 'urgent' ? 'danger' : ($request->priority->value == 'normal' ? 'primary' : 'secondary') }}">
+                            {{ ucfirst($request->priority->value) }}
+                        </h5>
                     </div>
                     
                     <div class="card-body">
                         @if($request->general_description)
-                            <p class="text-muted mb-3">{{ Str::limit($request->general_description, 80) }}</p>
+                            <h6>Deskripsi Umum</h6>
+                            <p class="mb-3">{{ Str::limit($request->general_description, 80) }}</p>
                         @endif
                         
                         <div class="mb-3">
-                            <small class="text-muted">
+                            <small class="badge bg-info">
                                 {{ $request->items->count() }} barang
                             </small>
-                            <small class="text-muted ms-3">
+                            <small class=" ms-3">
                                 {{ $request->user->username }}
                             </small>
                         </div>
                         
                         <div class="mb-3">
-                            <small class="text-muted">
+                            <small class="">
                                 {{ $request->location ? Str::limit($request->location->address, 30) : 'Tanpa Lokasi' }}
                             </small>
                         </div>
@@ -105,13 +106,13 @@
                                  style="width: {{ $request->getProgressPercentageAttribute() }}%;">
                             </div>
                         </div>
-                        <small class="text-muted d-block mb-3">
+                        <small class=" d-block mb-3">
                             {{ $request->getProgressPercentageAttribute() }}% terpenuhi
                         </small>
                         
                         <!-- Item Preview -->
                         <div class="mb-3">
-                            <small class="text-muted d-block mb-2">Barang diperlukan:</small>
+                            <small class=" d-block mb-2">Barang diperlukan:</small>
                             <div class="d-flex flex-wrap gap-1">
                                 @foreach($request->items->take(3) as $item)
                                     <span class="badge bg-light text-dark border">
@@ -125,11 +126,26 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="mb-3">
+                            <small class=" d-block mb-2">Kondisi Barang yang Diharapkan:</small>
+                            <div class="d-flex flex-wrap gap-1">
+                                @foreach($request->items->take(3) as $item)
+                                    <span class="badge bg-{{ $item->preferred_condition->value == 'need_repair' ? 'warning' : 'info' }} border">
+                                        {{ $item->preferred_condition->value }} ({{ $item->quantity }})
+                                    </span>
+                                @endforeach
+                                @if($request->items->count() > 3)
+                                    <span class="badge bg-light text-dark border">
+                                        +{{ $request->items->count() - 3 }} Lebih
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="card-footer bg-transparent">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
+                            <small class="">
                                 {{ $request->created_at->diffForHumans() }}
                             </small>
                             <a href="{{ route('admin.donation-request.show', $request->donation_request_id) }}" 
@@ -153,7 +169,7 @@
     <div class="card">
         <div class="card-body text-center py-5">
             <h5>Permintaan Donasi Tidak Ditemukan</h5>
-            <p class="text-muted">
+            <p class="">
                 @if(request()->hasAny(['category_id', 'priority', 'condition']))
                     Coba perbaiki filter yang digunakan
                 @else

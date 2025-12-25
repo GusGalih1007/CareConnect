@@ -39,9 +39,9 @@ class DonationRequestItems extends Model
         'preferred_condition' => DonationRequestCondition::class,
         'priority' => DonationRequestPriority::class,
         'status' => DonationRequestStatus::class,
-        'created_at' => 'datatime:Y-m-d H:i',
-        'updated_at' => 'datatime:Y-m-d H:i',
-        'deleted_at' => 'datatime:Y-m-d H:i',
+        'created_at' => 'datetime:Y-m-d H:i',
+        'updated_at' => 'datetime:Y-m-d H:i',
+        'deleted_at' => 'datetime:Y-m-d H:i',
     ];
 
     public function request()
@@ -57,6 +57,11 @@ class DonationRequestItems extends Model
     public function itemMatches()
     {
         return $this->hasMany(DonationItemMatch::class, 'donation_request_item_id', 'donation_request_item_id');
+    }
+
+    public function validation()
+    {
+        return $this->hasOne(DonationRequestItemValidation::class, 'donation_request_item_id', 'donation_request_item_id');
     }
 
     // Helper methods

@@ -181,12 +181,13 @@ class AuthController extends Controller
         $this->logInfo('Login attempt', [
             'email' => $request->email,
             'ip' => $request->ip(),
+            'remember_me' => $request->remember_me
         ]);
 
         $validate = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string|min:8',
-            'remember_me' => 'nullable|boolean',
+            'remember_me' => 'nullable',
         ]);
 
         // dd($request->remember_me);

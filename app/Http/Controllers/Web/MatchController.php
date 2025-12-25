@@ -65,7 +65,7 @@ class MatchController extends Controller
                 })
                 ->where('status', DonationMatchStatus::Pending)
                 ->latest()
-                ->get();
+                ->paginate(12);
 
             return view('dashboard.donation-match.index', compact('matches'));
         } catch (Exception $e) {

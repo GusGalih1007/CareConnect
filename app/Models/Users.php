@@ -8,15 +8,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Users extends Authenticatable
 {
+    use HasApiTokens;
     use HasFactory;
     use HasUuids;
     use Notifiable;
     use SoftDeletes;
-    use HasApiTokens;
 
     protected $table = 'users';
 
@@ -36,7 +35,7 @@ class Users extends Authenticatable
         'avatar',
         'bio',
         'is_active',
-        'email_verified_at'
+        'email_verified_at',
     ];
 
     protected $casts = [
@@ -68,7 +67,7 @@ class Users extends Authenticatable
         return $this->hasMany(DonationRequest::class, 'user_id', 'user_id');
     }
 
-    public function donationRequestValidation()
+    public function requestValidation()
     {
         return $this->hasMany(DonationRequestValidation::class, 'admin_id', 'user_id');
     }
@@ -120,7 +119,12 @@ class Users extends Authenticatable
 
     public function otpCode()
     {
-        return $this->hasMany(OtpCode::class. 'user_id', 'user_id');
+        return $this->hasMany(OtpCode::class.'user_id', 'user_id');
+    }
+
+    public function itemValidation()
+    {
+        return $this->hasMany(DonationRequestItemValidation::class, 'admin_id', 'user_id');
     }
 
     public function isAdmin()
@@ -131,6 +135,21 @@ class Users extends Authenticatable
     public function isVolunteer()
     {
         return $this->role->role_name === 'volunteer';
+    }
+
+    public function pendingMatches()
+    {
+        return $this->hasManyThrough(
+            DonationItemMatch::class,
+            DonationRequestItems::class,
+            'donation_request_id',
+            'donation_request_item_id',
+            'donation_request_id',
+            'donation_request_item_id'
+        )->where('status', 'pending')
+            ->orWhereHas('donationItem.donation', function ($q) {
+                $q->where('user_id', $this->user_id);
+            })->where('status', 'pending');
     }
 
     /**

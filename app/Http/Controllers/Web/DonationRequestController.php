@@ -4,18 +4,21 @@ namespace App\Http\Controllers\Web;
 
 use App\Enum\DonationRequestPriority;
 use App\Enum\DonationRequestStatus;
+use App\Enum\DonationRequestValidationStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\DonationRequest;
 use App\Models\DonationRequestItems;
+use App\Models\DonationRequestItemValidation;
+use App\Models\DonationRequestValidation;
 use App\Models\Location;
+use App\Services\MatchingService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use App\Services\MatchingService;
 
 class DonationRequestController extends Controller
 {
@@ -50,7 +53,7 @@ class DonationRequestController extends Controller
             //     ->latest()
             //     ->get();
             $allData = DonationRequest::latest()->paginate(10);
-            
+
             return view('dashboard.donation-request.index', compact('allData'));
         } catch (Exception $e) {
             $this->logError('Failed rendering index page', $e, []);
@@ -125,9 +128,19 @@ class DonationRequestController extends Controller
                 'status' => DonationRequestStatus::Pending,
             ]);
 
+            $this->logInfo('Donation request created', [
+                'donation_request_id' => $donationRequest->donation_request_id,
+                'user_id' => Auth::id(),
+            ]);
+
+            $requestValidation = DonationRequestValidation::create([
+                'donation_request_id' => $donationRequest->donation_request_id,
+                'status' => DonationRequestValidationStatus::Pending,
+            ]);
+
             // Create donation request items
             foreach ($request->items as $item) {
-                DonationRequestItems::create([
+                $requestItem = DonationRequestItems::create([
                     'donation_request_id' => $donationRequest->donation_request_id,
                     'category_id' => $item['category_id'],
                     'item_name' => $item['item_name'],
@@ -138,19 +151,36 @@ class DonationRequestController extends Controller
                     'status' => DonationRequestStatus::Pending,
                     'fulfilled_quantity' => 0,
                 ]);
+
+                $this->logInfo('Created donation request item', [
+                    'donation_request_item_id' => $requestItem->donation_request_item_id,
+                    'donation_request_id' => $donationRequest->donation_request_id,
+                    'category_id' => $item['category_id'],
+                ]);
+
+                DonationRequestItemValidation::create([
+                    'request_validation_id' => $requestValidation->request_validation_id,
+                    'donation_request_item_id' => $requestItem->donation_request_item_id,
+                    'category_id' => $item['category_id'],
+                    'status' => DonationRequestValidationStatus::Pending,
+                ]);
             }
 
             DB::commit();
 
+            $this->logInfo('Donation request successfully stored and validated', [
+                'donation_request_id' => $donationRequest->donation_request_id,
+            ]);
+
             return redirect()->route('admin.donation-request.show', $donationRequest->donation_request_id)
                 ->with('success', 'Permintaan donasi berhasil dibuat. Menunggu validasi admin.');
         } catch (Exception $e) {
-            DB::rollBack();
             $this->logError('Failed to store data', $e, [
                 'payload' => $request->all(),
             ]);
+            DB::rollBack();
 
-            return redirect()->back()->with('error', 'Data gagal ditambahkan. Terjadi kesalahan dalam sistem');
+            return redirect()->back()->with('error', 'Data gagal ditambahkan. Terjadi kesalahan dalam sistem')->withInput();
         }
     }
 
@@ -272,6 +302,26 @@ class DonationRequestController extends Controller
                 'priority' => $request->priority,
             ]);
 
+            $this->logInfo('Donation request updated', [
+                'donation_request_id' => $donationRequest->donation_request_id,
+            ]);
+
+            // Get or create validation record
+            $requestValidation = $donationRequest->validation;
+            if (! $requestValidation) {
+                $requestValidation = DonationRequestValidation::create([
+                    'donation_request_id' => $donationRequest->donation_request_id,
+                    'status' => DonationRequestValidationStatus::Pending,
+                ]);
+                $this->logInfo('Created validation record for request', [
+                    'donation_request_id' => $donationRequest->donation_request_id,
+                ]);
+            } else {
+                $requestValidation->update([
+                    'updated_at' => now(),
+                ]);
+            }
+
             // Get existing item IDs
             $existingItemIds = $donationRequest->items->pluck('donation_request_item_id')->toArray();
             $updatedItemIds = [];
@@ -288,7 +338,17 @@ class DonationRequestController extends Controller
                         'quantity' => $itemData['quantity'],
                         'preferred_condition' => $itemData['preferred_condition'],
                         'priority' => $itemData['priority'],
+                        'updated_at' => now(),
                     ]);
+
+                    // Update or create item validation
+                    $itemValidation = DonationRequestItemValidation::where('donation_request_item_id', $itemData['id'])->first();
+
+                    $itemValidation->update([
+                        'category_id' => $itemData['category_id'],
+                        'updated_at' => now(),
+                    ]);
+
                     $updatedItemIds[] = $itemData['id'];
                 } else {
                     // Create new item
@@ -300,9 +360,18 @@ class DonationRequestController extends Controller
                         'quantity' => $itemData['quantity'],
                         'preferred_condition' => $itemData['preferred_condition'],
                         'priority' => $itemData['priority'],
-                        'status' => 'pending',
+                        'status' => DonationRequestStatus::Pending,
                         'fulfilled_quantity' => 0,
                     ]);
+
+                    // Create new item validation
+                    DonationRequestItemValidation::create([
+                        'request_validation_id' => $requestValidation->request_validation_id,
+                        'donation_request_item_id' => $newItem->donation_request_item_id,
+                        'category_id' => $itemData['category_id'],
+                        'status' => DonationRequestValidationStatus::Pending,
+                    ]);
+
                     $updatedItemIds[] = $newItem->donation_request_item_id;
                 }
             }
@@ -310,23 +379,41 @@ class DonationRequestController extends Controller
             // Delete items that were removed
             $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
             if (! empty($itemsToDelete)) {
+                // Delete donation request items
                 DonationRequestItems::whereIn('donation_request_item_id', $itemsToDelete)->delete();
+
+                // Delete corresponding item validations
+                DonationRequestItemValidation::whereIn('donation_request_item_id', $itemsToDelete)
+                    ->delete();
+            }
+
+            // Check if all items are deleted, delete the request if empty
+            if (empty($updatedItemIds)) {
+                $donationRequest->delete();
+                DB::commit();
+
+                return redirect()->route('admin.donation-request.index')
+                    ->with('warning', 'Permintaan donasi dihapus karena tidak memiliki item.');
             }
 
             DB::commit();
+
+            $this->logInfo('Donation request successfully updated', [
+                'donation_request_id' => $donationRequest->donation_request_id,
+            ]);
 
             return redirect()->route('admin.donation-request.show', $donationRequest->donation_request_id)
                 ->with('success', 'Permintaan donasi berhasil diperbarui.');
 
         } catch (Exception $e) {
-            DB::rollBack();
             $this->logError('Failed updating data', $e, [
                 'payload' => $request->all(),
             ]);
+            DB::rollBack();
 
             return redirect()->back()
                 ->with('error', 'Gagal merubah data. Coba lagi nanti')
-                ->withInput();
+                ->withInput()->withInput();
         }
 
     }
@@ -350,7 +437,27 @@ class DonationRequestController extends Controller
                     ->with('error', 'Hanya permintaan yang masih pending dapat dihapus.');
             }
 
+            $this->logInfo('Attempt to delete donation request', [
+                'donation_request_id' => $id,
+            ]);
+
+            // Get validation record
+            $requestValidation = $request->validation;
+
+            // Delete item validations first
+            if ($requestValidation) {
+                DonationRequestItemValidation::where('request_validation_id', $requestValidation->request_validation_id)->delete();
+                $requestValidation->delete();
+            }
+
+            // Delete donation request items
+            DonationRequestItems::where('donation_request_id', $id)->delete();
+
             $request->delete();
+
+            $this->logInfo('Donation request successfully deleted', [
+                'donation_request_id' => $id,
+            ]);
 
             return redirect()->route('admin.donation-request.index')
                 ->with('success', 'Permintaan donasi berhasil dihapus.');
@@ -368,12 +475,13 @@ class DonationRequestController extends Controller
      */
     private function getPotentialMatches(DonationRequest $request)
     {
-        try
-        {
-            $matchingService = new MatchingService();
+        try {
+            $matchingService = new MatchingService;
+
             return $matchingService->findMatchesForRequest($request);
         } catch (Exception $e) {
             $this->logError('Failed get potential matches', $e, []);
+
             return redirect()->back()->with('error', 'Tidak dapat mencari data yang cocok. Coba lagi nanti');
         }
     }
@@ -383,18 +491,19 @@ class DonationRequestController extends Controller
      */
     public function browse()
     {
-        try
-        {
+        try {
             $requests = DonationRequest::with(['items.category', 'location', 'user'])
-                ->active()
                 ->latest()
                 ->paginate(12);
-    
+
+            // dd($requests);
+
             $categories = Category::all();
-            
+
             return view('dashboard.donation-request.browse', compact('requests', 'categories'));
         } catch (Exception $e) {
             $this->logError('Failed to redered browse page', $e, []);
+
             return redirect()->back()->with('error', 'Gagal memuat halaman. Coba lagi nanti');
         }
     }
@@ -404,38 +513,37 @@ class DonationRequestController extends Controller
      */
     public function filter(Request $request)
     {
-        try 
-        {
-            $query = DonationRequest::with(['items.category', 'location', 'user'])
-                ->active();
-    
+        try {
+            $query = DonationRequest::with(['items.category', 'location', 'user']);
+
             // Filter by category
             if ($request->has('category_id') && $request->category_id) {
                 $query->whereHas('items', function ($q) use ($request) {
                     $q->where('category_id', $request->category_id);
                 });
             }
-    
+
             // Filter by priority
             if ($request->has('priority') && $request->priority) {
                 $query->where('priority', $request->priority);
             }
-    
+
             // Filter by location (simple text search)
-            if ($request->has('location') && $request->location) {
-                $query->whereHas('location', function ($q) use ($request) {
-                    $q->where('address', 'like', '%' . $request->location . '%');
+            if ($request->has('condition') && $request->condition) {
+                $query->whereHas('items', function ($q) use ($request) {
+                    $q->where('preferred_condition', 'like', '%'.$request->condition.'%');
                 });
             }
-    
+
             $requests = $query->latest()->paginate(12);
             $categories = Category::all();
-    
+
             return view('dashboard.donation-request.browse', compact('requests', 'categories'));
         } catch (Exception $e) {
             $this->logError('Failed to filter data', $e, [
-                'payload' => $request->all()
+                'payload' => $request->all(),
             ]);
+
             return redirect()->back()->with('error', 'Gagal memfilter data. Coba lagi nanti');
         }
     }

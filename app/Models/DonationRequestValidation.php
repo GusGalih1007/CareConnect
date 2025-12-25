@@ -15,7 +15,7 @@ class DonationRequestValidation extends Model
     protected $table = 'donation_request_validations';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $primaryKey = 'donation_request_validation_id';
+    protected $primaryKey = 'request_validation_id';
     protected $fillable = [
         'donation_request_id',
         'admin_id',
@@ -33,12 +33,18 @@ class DonationRequestValidation extends Model
         'status' => DonationRequestValidationStatus::class,
     ];
 
-    public function donationRequest()
+    public function request()
     {
         return $this->belongsTo(DonationRequest::class, 'donation_request_id', 'donation_request_id');
     }
+
     public function admin()
     {
         return $this->belongsTo(Users::class, 'admin_id', 'user_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(DonationRequestItemValidation::class, 'request_validation_id', 'request_validation_id');
     }
 }

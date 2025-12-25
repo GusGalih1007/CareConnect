@@ -71,7 +71,7 @@ class DonationRequest extends Model
 
     public function validation()
     {
-        return $this->hasMany(DonationRequestValidation::class, 'donation_request_id', 'donation_request_id');
+        return $this->hasOne(DonationRequestValidation::class, 'donation_request_id', 'donation_request_id');
     }
 
     public function donation()

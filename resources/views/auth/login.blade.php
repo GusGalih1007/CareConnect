@@ -54,11 +54,7 @@
                                             {{ $errors->first('password') }}
                                         </div>
                                     @endif
-                                    <div class="col-lg-12 d-flex justify-content-between">
-                                        <div class="form-check mb-3">
-                                        <input type="checkbox" name="remember_me" value="true" class="form-check-input" id="rememberMe">
-                                        <label class="form-check-label" for="rememberMe">Remember Me</label>
-                                    </div>
+                                    <div>
                                         <a href="{{ route('forgot-password.form') }}">Lupa password?</a>
                                     </div>
                                 </div>

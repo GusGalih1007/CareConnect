@@ -126,7 +126,7 @@ class AuthController extends Controller
 
             // $request->session()->put('otp_email', $request->email);
             session([
-                'register_payload' => [
+                'register_body' => [
                     'email' => $request->email,
                     'username' => $request->username,
                     'password' => Hash::make($request->password),
@@ -181,13 +181,11 @@ class AuthController extends Controller
         $this->logInfo('Login attempt', [
             'email' => $request->email,
             'ip' => $request->ip(),
-            'remember_me' => $request->remember_me
         ]);
 
         $validate = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string|min:8',
-            'remember_me' => 'nullable',
         ]);
 
         // dd($request->remember_me);
@@ -244,7 +242,6 @@ class AuthController extends Controller
             $request->session()->put('otp_user_id', $userAccount->user_id);
             $request->session()->put('otp_type', OtpType::Login);
             $request->session()->put('otp_message', 'Verifikasi login');
-            $request->session()->put('remember_me', $request->remember_me);
 
             return redirect()->route('verify-otp.form');
         } catch (Exception $e) {
@@ -362,16 +359,16 @@ class AuthController extends Controller
     public function verifyEmailOtp($otp)
     {
         $this->logInfo('Register verification attempt', [
-            'payload' => session('register_payload'),
+            'request_body' => session('register_body'),
         ]);
         try {
-            $payload = session('register_payload');
+            $body = session('register_body');
 
-            if (! $payload) {
+            if (! $body) {
                 return redirect()->route('register.form')->with('error', 'Sesi registrasi berakhir. Mulai ulang registrasi');
             }
 
-            $result = $this->otpService->verifyRegister($payload['email'], $otp);
+            $result = $this->otpService->verifyRegister($body['email'], $otp);
 
             if (! $result['success']) {
                 return back()->with('error', $result['message']);
@@ -379,20 +376,20 @@ class AuthController extends Controller
 
             $defaultRole = Role::where('role_name', 'User')->first();
 
-            Users::create([...$payload, 'role_id' => $defaultRole, 'email_verified_at' => now(), 'is_active' => true]);
+            Users::create([...$body, 'role_id' => $defaultRole, 'email_verified_at' => now(), 'is_active' => true]);
 
             $this->logInfo('Register complete', [
-                'payload' => $payload,
+                'body' => $body,
                 'otp_type' => session('otp_type'),
             ]);
 
-            session()->forget(['otp_type', 'otp_message', 'register_payload']);
+            session()->forget(['otp_type', 'otp_message', 'register_body']);
             // $request->session()->put('otp_verified', true);
 
             return redirect()->route('login.form');
         } catch (Exception $e) {
             $this->logError('Error while trying to veriify register', $e, [
-                'payload' => session('register_payload'),
+                'request_body' => session('register_body'),
                 'otp_type' => session('otp_type'),
             ]);
 
@@ -415,8 +412,6 @@ class AuthController extends Controller
             ]);
             $otpType = session('otp_type');
 
-            $rememberMe = session('remember_me');
-
             $user = Users::find(session('otp_user_id'));
 
             if (! $user) {
@@ -437,7 +432,7 @@ class AuthController extends Controller
                 return redirect()->back()->with('error', $is_valid['message']);
             }
 
-            Auth::guard('web')->login($user, $rememberMe);
+            Auth::guard('web')->login($user, true);
             session()->save();
 
             session()->forget(['otp_user_id', 'otp_type', 'otp_message']);

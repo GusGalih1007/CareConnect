@@ -125,7 +125,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $this->logInfo('Category store attempt', [
-            'payload' => $request->all()
+            'request_body' => $request->all()
         ]);
 
         $validate = Validator::make($request->all(), [
@@ -153,7 +153,7 @@ class CategoryController extends Controller
             return redirect()->route('admin.category.index')->with('success', 'Data berhasil Ditambahkan');
         } catch (Exception $e) {
             $this->logError('Error attempting store data', $e, [
-                'payload' => $request->all()
+                'request_body' => $request->all()
             ]);
             return redirect()->back()->with('error', 'Data gagal ditambahkan. Terjadi kesalahan dalam sistem');
         }
@@ -209,7 +209,7 @@ class CategoryController extends Controller
 
         $this->logInfo('Update data attempt', [
             'id' => $id,
-            'payload' => $request->all()
+            'request_body' => $request->all()
         ]);
 
         try
@@ -232,7 +232,7 @@ class CategoryController extends Controller
             return redirect()->route('admin.category.index')->with('success', 'Data berhasil di edit');
         } catch (Exception $e) {
             $this->logError('Failed updating data', $e, [
-                'payload' => $request->all()
+                'request_body' => $request->all()
             ]);
             return redirect()->back()->with('error', 'Gagal merubah data. Coba lagi nanti');
         }

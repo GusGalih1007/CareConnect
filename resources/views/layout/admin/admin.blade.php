@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{{ asset('hope-ui/html/assets/css/custom.min.css?v=5.0.0') }}">
 
     <!-- Customizer Css -->
-    <link rel="stylesheet" href="{{ asset('hope-ui/html/assets/css/customizer.min.css?v=5.0.') }}0">
+    <link rel="stylesheet" href="{{ asset('hope-ui/html/assets/css/customizer.min.css?v=5.0.0') }}">
 
     <!-- RTL Css -->
     <link rel="stylesheet" href="{{ asset('hope-ui/html/assets/css/rtl.min.css?v=5.0.0') }}">

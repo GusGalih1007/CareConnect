@@ -59,11 +59,6 @@ class DonationRequestItems extends Model
         return $this->hasMany(DonationItemMatch::class, 'donation_request_item_id', 'donation_request_item_id');
     }
 
-    public function validation()
-    {
-        return $this->hasOne(DonationRequestItemValidation::class, 'donation_request_item_id', 'donation_request_item_id');
-    }
-
     // Helper methods
     public function getRemainingQuantityAttribute()
     {

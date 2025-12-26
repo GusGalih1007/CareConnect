@@ -44,9 +44,4 @@ class Category extends Model
     {
         return $this->hasMany(DonationItems::class, 'category_id', 'category_id');
     }
-
-    public function itemValidation()
-    {
-        return $this->hasMany(DonationRequestItemValidation::class, 'category_id', 'category_id');
-    }
 }

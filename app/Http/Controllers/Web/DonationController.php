@@ -84,7 +84,7 @@ class DonationController extends Controller
     public function store(Request $request)
     {
         $this->logInfo('Donation store attempt', [
-            'payload' => $request->all(),
+            'request_body' => $request->all(),
         ]);
         $validate = Validator::make($request->all(), [
             'title' => 'required|string|max:150',
@@ -186,7 +186,7 @@ class DonationController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             $this->logError('Failed to store data', $e, [
-                'payload' => $request->all(),
+                'request_body' => $request->all(),
             ]);
 
             return redirect()->back()->with('error', 'Gagal menambahkan data. Coba lagi nanti');
@@ -260,7 +260,7 @@ class DonationController extends Controller
     public function update(Request $request, string $id)
     {
         $this->logInfo('Donation store attempt', [
-            'payload' => $request->all(),
+            'request_body' => $request->all(),
         ]);
 
         $donation = Donation::findOrFail($id);
@@ -297,7 +297,7 @@ class DonationController extends Controller
 
         if ($validator->fails()) {
             $this->logError('Validation error', null, [
-                'payload' => $request->all(),
+                'request_body' => $request->all(),
                 'message' => $validator,
             ]);
 
@@ -431,7 +431,7 @@ class DonationController extends Controller
             DB::rollBack();
             $this->logError('Failed to update data', $e, [
                 'id' => $id,
-                'payload' => $request->all(),
+                'request_body' => $request->all(),
             ]);
 
             return redirect()->back()->with('error', 'Gagal merubah data. Coba lagi nanti');

@@ -122,11 +122,6 @@ class Users extends Authenticatable
         return $this->hasMany(OtpCode::class.'user_id', 'user_id');
     }
 
-    public function itemValidation()
-    {
-        return $this->hasMany(DonationRequestItemValidation::class, 'admin_id', 'user_id');
-    }
-
     public function isAdmin()
     {
         return $this->role->role_name === 'Super Admin' || $this->role->role_name === 'admin';

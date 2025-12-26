@@ -14,7 +14,7 @@
         </div>
         <div class="d-flex">
             <a href="{{ route('admin.donation-request.index') }}" class="btn btn-outline-secondary me-2">
-                Back
+                Kembali
             </a>
             @if($request->isPending())
                 <a href="{{ route('admin.donation-request.edit', $request->donation_request_id) }}" class="btn btn-warning me-2">
@@ -23,7 +23,7 @@
             @endif
             @if($request->isActive())
                 <a href="{{ route('admin.donation.browse') }}?category={{ $request->items->first()->category_id ?? '' }}" class="btn btn-success">
-                    Find Donations
+                    Cari Donasi
                 </a>
             @endif
         </div>
@@ -35,7 +35,7 @@
         <!-- Request Details Card -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                <h4 class="mb-4">Request Details</h4>
+                <h4 class="mb-4">Detail Permintaan</h4>
                 <div class="mb-4">
                     <span class="badge bg-{{ $request->status->value == 'pending' ? 'warning' : ($request->status->value == 'active' ? 'success' : ($request->status->value == 'fulfilled' ? 'info' : 'secondary')) }}">
                         {{ ucfirst($request->status->value) }}
@@ -48,7 +48,7 @@
             <div class="card-body">
                 @if($request->general_description)
                     <div class="mb-4">
-                        <h6>Description</h6>
+                        <h6>Deskripsi</h6>
                         <p class="text-muted">{{ $request->general_description }}</p>
                     </div>
                 @endif
@@ -57,14 +57,12 @@
                     <div class="col-md-6">
                         <h6>Location</h6>
                         <p class="text-muted">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                            {{ $request->location ? $request->location->address : 'No location specified' }}
+                            {{ $request->location ? $request->location->address : 'Tidak ada alamat' }}
                         </p>
                     </div>
                     <div class="col-md-6">
-                        <h6>Request Type</h6>
+                        <h6>Tipe Permintaan</h6>
                         <p class="text-muted">
-                            <i class="fas fa-{{ $request->donation_type == 'single_item' ? 'box' : 'boxes' }} text-primary me-2"></i>
                             {{ $request->donation_type == 'single_item' ? 'Single Item' : 'Multiple Items' }}
                         </p>
                     </div>
@@ -79,15 +77,15 @@
                         </div>
                     </div>
                     <p class="text-muted mb-0">
-                        {{ $request->getFulfilledItemsAttribute() }} of {{ $request->getTotalItemsAttribute() }} items fulfilled
+                        {{ $request->getFulfilledItemsAttribute() }} of {{ $request->getTotalItemsAttribute() }} Barang Terpenuhi
                     </p>
                 </div>
                 
                 @if($request->validation)
                     <div class="mb-4 alert alert-{{ $request->validation->status->value == 'approved' ? 'success' : ($request->validation->status->value == 'rejected' ? 'danger' : 'warning') }}">
-                        <h6>Validation Status: {{ ucfirst($request->validation->status->value) }}</h6>
+                        <h6>Status Persetujuan: {{ ucfirst($request->validation->status->value) }}</h6>
                         @if($request->validation->note)
-                            <p class="mb-0"><strong>Note:</strong> {{ $request->validation->note }}</p>
+                            <p class="mb-0"><strong>Catatan:</strong> {{ $request->validation->note }}</p>
                         @endif
                     </div>
                 @endif
@@ -99,7 +97,7 @@
                             {{ $request->user->username }}
                         </p>
                     </div>
-                    @if ($request->validation->admin)
+                    @if (!$request->status->value == 'active')
                     <div class="col-md-6">
                         <h6>Disetujui Oleh</h6>
                         <p class="text-muted">
@@ -111,8 +109,8 @@
             </div>
             <div class="card-footer bg-transparent">
                 <small class="text-muted">
-                    Created: {{ $request->created_at->format('d M Y, H:i') }} | 
-                    Updated: {{ $request->updated_at->format('d M Y, H:i') }}
+                    Dibuat: {{ $request->created_at->format('d M Y, H:i') }} | 
+                    Diubah: {{ $request->updated_at->format('d M Y, H:i') }}
                 </small>
             </div>
         </div>
@@ -120,18 +118,18 @@
         <!-- Request Items Card -->
         <div class="card shadow-sm">
             <div class="card-header bg-light">
-                <h4 class="mb-4">Request Items ({{ $request->items->count() }})</h4>
+                <h4 class="mb-4">Barang yang Diminta ({{ $request->items->count() }})</h4>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Item</th>
-                                <th>Category</th>
-                                <th>Quantity</th>
-                                <th>Condition</th>
-                                <th>Priority</th>
+                                <th>Barang</th>
+                                <th>Kategori</th>
+                                <th>Jumlah</th>
+                                <th>Kondisi</th>
+                                <th>Prioritas</th>
                                 <th>Status</th>
                                 <th>Progress</th>
                             </tr>
@@ -183,7 +181,7 @@
         <!-- Potential Matches Card -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-light">
-                <h4 class="mb-4">Potential Matches</h4>
+                <h4 class="mb-4">Potensi Donatur</h4>
             </div>
             <div class="card-body">
                 @if($potentialMatches && $potentialMatches->count() > 0)
@@ -194,8 +192,8 @@
                                     <div>
                                         <h6 class="mb-1">{{ $match['donation_item']->item_name }}</h6>
                                         <small class="text-muted">
-                                            Available: {{ $match['available_quantity'] }} | 
-                                            Needed: {{ $match['needed_quantity'] }}
+                                            Tersedia: {{ $match['available_quantity'] }} | 
+                                            Butuh: {{ $match['needed_quantity'] }}
                                         </small>
                                     </div>
                                     <span class="badge bg-warning">Score: {{ $match['score'] }}</span>
@@ -212,7 +210,7 @@
                                 
                                 <a href="{{ route('admin.donation.show', $match['donation_item']->donation->donation_id) }}" 
                                    class="btn btn-sm btn-outline-primary w-100">
-                                    <i class="fas fa-external-link-alt me-1"></i> View Donation
+                                    Lihat Donasi
                                 </a>
                             </div>
                             @if(!$loop->last)<hr class="my-2">@endif
@@ -223,15 +221,14 @@
                         <div class="text-center mt-3">
                             <a href="{{ route('admin.donation.browse') }}?request_id={{ $request->donation_request_id }}" 
                                class="btn btn-sm btn-outline-primary">
-                                View All {{ $potentialMatches->count() }} Matches
+                                Lihat Semua {{ $potentialMatches->count() }} Donatur
                             </a>
                         </div>
                     @endif
                 @else
                     <div class="text-center py-4">
-                        <i class="fas fa-search fa-2x text-muted mb-3"></i>
-                        <p class="text-muted mb-0">No potential matches found yet</p>
-                        <p class="text-muted small">We'll notify you when matches are found</p>
+                        <p class="text-muted mb-0">Rekomendasi donatur belum ditemukan</p>
+                        <p class="text-muted small">Kami akan memberitahukan bila sudah ditemukan</p>
                     </div>
                 @endif
             </div>
@@ -251,19 +248,19 @@
                     @endif
                     
                     <a href="{{ route('admin.donation.browse') }}" class="btn btn-outline-primary">
-                        Browse Donations
+                        Telusuri Donasi
                     </a>
                     
                     <a href="{{ route('admin.donation-match.for-request', $request->donation_request_id) }}" class="btn btn-outline-info">
-                        View Matches
+                        Lihat Rekomendasi
                     </a>
                     
                     @if($request->isPending())
-                        <form class="d-grid" action="{{ route('admin.donation-request.destroy', $request->donation_request_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this request?')">
+                        <form class="d-grid" action="{{ route('admin.donation-request.destroy', $request->donation_request_id) }}" method="POST" onsubmit="return confirm('Apakah anda serius ingin menghapus permintaan ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger">
-                                Delete Request
+                                Hapus Permintaan
                             </button>
                         </form>
                     @endif

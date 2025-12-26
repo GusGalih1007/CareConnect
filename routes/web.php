@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\CategoryController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\DonationController;
+use App\Http\Controllers\Web\DonationValidationController;
 use App\Http\Controllers\Web\DonationRequestController;
 use App\Http\Controllers\Web\LocationController;
 use App\Http\Controllers\Web\MatchController;
@@ -120,6 +121,12 @@ Route::middleware('user.status')->group(function () {
             // For specific request/donation
             Route::get('/request/{requestId}', [MatchController::class, 'forRequest'])->name('admin.donation-match.for-request');
             Route::get('/donation/{donationId}', [MatchController::class, 'forDonation'])->name('admin.donation-match.for-donation');
+        });
+
+        Route::prefix('donation-validate')->group(function () {
+            Route::get('/', [DonationValidationController::class, 'index'])->name('admin.donation-validation.index');
+            Route::get('/{id}', [DonationValidationController::class, 'show'])->name('admin.donation-validation.show');
+            Route::post('/{id}/validate', [DonationValidationController::class, 'donationValidate'])->name('admin.donation-validation.validate');
         });
     });
 });

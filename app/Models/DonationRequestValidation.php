@@ -42,9 +42,4 @@ class DonationRequestValidation extends Model
     {
         return $this->belongsTo(Users::class, 'admin_id', 'user_id');
     }
-
-    public function items()
-    {
-        return $this->hasMany(DonationRequestItemValidation::class, 'request_validation_id', 'request_validation_id');
-    }
 }

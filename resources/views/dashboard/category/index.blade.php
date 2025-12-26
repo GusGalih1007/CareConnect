@@ -15,7 +15,7 @@
                 </div>
                 <div class="card-body">
                     <div class="custom-datatable-entries">
-                        <table id="datatable" class="table-bordered table-hover table" data-toggle="data-table">
+                        <table id="datatable" class="table table-bordered table-hover" data-toggle="data-table">
                             <thead>
                                 <tr>
                                     <td>No.</td>

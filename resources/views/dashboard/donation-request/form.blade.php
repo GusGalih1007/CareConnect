@@ -21,25 +21,11 @@
 
                         <div class="row">
                             <!-- Title -->
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="title">Title *</label>
                                     <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $request->title ?? '') }}" required>
                                     @error('title')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Donation Type -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="donation_type">Donation Type *</label>
-                                    <select class="form-control" id="donation_type" name="donation_type" required>
-                                        <option value="single_item" {{ (old('donation_type', $request->donation_type->value ?? '') == 'single_item') ? 'selected' : '' }}>Single Item</option>
-                                        <option value="multiple_items" {{ (old('donation_type', $request->donation_type->value ?? '') == 'multiple_items') ? 'selected' : '' }}>Multiple Items</option>
-                                    </select>
-                                    @error('donation_type')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
